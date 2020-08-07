@@ -10,9 +10,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("MSD v1.0 Beta");
 
-        Command.loadFile("/Users/squ1dd13/Documents/msd/commands.ini");
+        Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
 
-        LowScript script = LowScript.load("/Users/squ1dd13/Downloads/debt.txt");
+        LowScript script = LowScript.load("/Users/squ1dd13/Documents/trains.txt");
 
         HighLevelScript highLevelScript = new HighLevelScript(script);
         highLevelScript.print();
