@@ -1,6 +1,4 @@
-package com.squ1dd13.msd.high.blocks;
-
-import com.squ1dd13.msd.low.*;
+package com.squ1dd13.msd.decompiler.high.blocks;
 
 import java.util.*;
 

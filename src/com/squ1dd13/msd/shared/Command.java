@@ -1,4 +1,6 @@
-package com.squ1dd13.msd.uni;
+package com.squ1dd13.msd.shared;
+
+import com.squ1dd13.msd.decompiler.shared.*;
 
 import java.io.*;
 import java.util.*;

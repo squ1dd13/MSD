@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.uni;
+package com.squ1dd13.msd.decompiler.shared;
 
 public enum DataType {
     // There are fewer types here than in the disassembler because

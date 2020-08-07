@@ -1,6 +1,6 @@
-package com.squ1dd13.msd.uni;
+package com.squ1dd13.msd.decompiler.shared;
 
-import com.squ1dd13.msd.high.*;
+import com.squ1dd13.msd.decompiler.high.*;
 
 public class DataValue {
     public DataType type = DataType.Unknown;

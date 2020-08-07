@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.high;
+package com.squ1dd13.msd.decompiler.high;
 
 public class SyntaxHighlight {
     private static class RGBColor {

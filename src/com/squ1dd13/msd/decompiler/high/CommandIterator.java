@@ -1,6 +1,6 @@
-package com.squ1dd13.msd.high;
+package com.squ1dd13.msd.decompiler.high;
 
-import com.squ1dd13.msd.uni.*;
+import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
 import java.util.function.*;

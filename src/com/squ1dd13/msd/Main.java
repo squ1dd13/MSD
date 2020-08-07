@@ -1,8 +1,8 @@
 package com.squ1dd13.msd;
 
-import com.squ1dd13.msd.high.*;
-import com.squ1dd13.msd.low.*;
-import com.squ1dd13.msd.uni.*;
+import com.squ1dd13.msd.decompiler.high.*;
+import com.squ1dd13.msd.decompiler.low.*;
+import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
 

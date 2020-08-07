@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.uni;
+package com.squ1dd13.msd.decompiler.shared;
 
 public class ParamInfo {
     // The type can be anything: int, float, reference to int, reference to float, etc.
