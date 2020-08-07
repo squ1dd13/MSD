@@ -1,5 +1,6 @@
 package com.squ1dd13.msd;
 
+import com.squ1dd13.msd.compiler.constructs.language.*;
 import com.squ1dd13.msd.compiler.text.*;
 import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.decompiler.low.*;
@@ -41,5 +42,13 @@ public class Main {
         var scm = parser.parse(lines);
         scm.compileAndWrite("/Users/squ1dd13/Documents/MSD-Project/compiled.scm");
 //        script.print();
+
+//        var classLines = Util.readLines("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/code/defs.msd");
+//        ClassConstruct theClass = ClassParser.parseClass(classLines);
+//
+//        System.out.println(theClass);
+//
+//        ClassConstruct currentClass = ClassConstruct.buildClass();
+//        Util.writeToFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/code/Game.msd", currentClass.toString());
     }
 }

@@ -90,8 +90,21 @@ public class Command {
         return paramInfo[paramIndex];
     }
 
+    public void setParamInfo(int paramIndex, ParamInfo info) {
+        if(paramInfo == null) {
+            paramInfo = new ParamInfo[arguments.length];
+        }
+
+        if(paramInfo.length <= paramIndex) {
+            System.out.println("out of bounds write for sPI()");
+            return;
+        }
+
+        paramInfo[paramIndex] = info;
+    }
+
     public String formattedString() {
-        String mainPart = name.substring(0, name.indexOf('('));
+        String mainPart = name.contains("(") ? name.substring(0, name.indexOf('(')) : name;
 
         List<String> argStrings = new ArrayList<>();
         for(int i = 0; i < arguments.length; i++) {

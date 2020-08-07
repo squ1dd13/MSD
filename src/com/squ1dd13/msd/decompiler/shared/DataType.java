@@ -138,4 +138,12 @@ public enum DataType {
                 return Unknown;
         }
     }
+
+    public DataType getAbsolute() {
+        if(isFloat()) return Flt;
+        if(isInteger()) return Int;
+        if(isString()) return Str;
+
+        return this;
+    }
 }

@@ -1,5 +1,6 @@
 package com.squ1dd13.msd.shared;
 
+import java.io.*;
 import java.nio.*;
 import java.util.*;
 
@@ -60,5 +61,33 @@ public class Util {
 
     public static String insetString(String s) {
         return insetString(s, 1);
+    }
+
+    public static List<String> readLines(String path) {
+        try {
+            List<String> lines = new ArrayList<>();
+
+            try(BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                String ln;
+
+                while((ln = reader.readLine()) != null) {
+                    lines.add(ln);
+                }
+            }
+
+            return lines;
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
+    public static void writeToFile(String path, String s) {
+        try {
+            FileWriter writer = new FileWriter(path);
+            writer.append(s);
+            writer.close();
+        } catch(IOException e) {
+            System.out.println("Write failed");
+        }
     }
 }
