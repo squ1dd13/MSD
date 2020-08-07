@@ -38,6 +38,10 @@ public enum LowLevelType {
         this.num = num;
     }
 
+    public static LowLevelType decode(int n) {
+        return values()[n];
+    }
+
     public int valueLength() {
         switch(this) {
             case End:
@@ -91,6 +95,24 @@ public enum LowLevelType {
 
         return bytes;
     }
+
+    public int[] toBytes(float value) {
+        int[] bytes = new int[valueLength() + 1];
+        bytes[0] = num;
+
+        int[] valueBytes = Util.floatToBytesLE(value);
+
+        for(int i = 1; i < bytes.length; ++i) {
+            bytes[i] = valueBytes[i - 1];
+        }
+
+//        System.arraycopy(valueBytes, 0, bytes, 1, bytes.length - 1);
+
+        return bytes;
+    }
+
+//    A4 03 09 54 52 41 49 4E 53 00 00 05 00 02 D4 94 06
+//    A4       54 52 41 49 4E 53 00 00 05    02 D4 94 06
 
     public int[] toBytes(String value) {
         if(this == StringVar) {

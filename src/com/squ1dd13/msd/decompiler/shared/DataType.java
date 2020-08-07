@@ -1,5 +1,7 @@
 package com.squ1dd13.msd.decompiler.shared;
 
+import com.squ1dd13.msd.shared.*;
+
 public enum DataType {
     // There are fewer types here than in the disassembler because
     //  the disassembler needs to know more types. Here, we can use higher-level
@@ -52,6 +54,38 @@ public enum DataType {
 
     public boolean isVariable() {
         return isGlobal() || isLocal();
+    }
+
+    public LowLevelType guessLowLevelType() {
+        switch(this) {
+            case End:
+            case Unknown:
+                return LowLevelType.Unknown;
+            case Int:
+                return LowLevelType.S32;
+            case Flt:
+                return LowLevelType.F32;
+            case Str:
+                return LowLevelType.StringVar;
+            case GlobalIntFloat:
+                return LowLevelType.GlobalIntFloat;
+            case LocalIntFloat:
+                return LowLevelType.LocalIntFloat;
+            case GlobalIntFloatArr:
+                return LowLevelType.GlobalIntFloatArr;
+            case LocalIntFloatArr:
+                return LowLevelType.LocalIntFloatArr;
+            case GlobalStr:
+                return LowLevelType.GlobalString16;
+            case LocalStr:
+                return LowLevelType.LocalString16;
+            case GlobalStrArr:
+                return LowLevelType.GlobalString16Arr;
+            case LocalStrArr:
+                return LowLevelType.LocalString16Arr;
+        }
+
+        return LowLevelType.Unknown;
     }
 
     public static DataType typeForString(String s) {
