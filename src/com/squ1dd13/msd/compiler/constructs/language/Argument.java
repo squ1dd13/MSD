@@ -9,9 +9,9 @@ import java.util.*;
 public class Argument implements Compilable {
     public LowLevelType type = LowLevelType.Unknown;
 
-    public int intValue;
-    public float floatValue;
-    public String stringValue;
+    public int intValue = 0;
+    public float floatValue = 0;
+    public String stringValue = "";
 
     public Argument(LowLevelType type, int intValue) {
         this.type = type;
@@ -41,6 +41,23 @@ public class Argument implements Compilable {
 
         int[] bytes = null;
 
+        if(hlt == DataType.End) {
+            if(intValue != 0) {
+                hlt = DataType.Int;
+                type = LowLevelType.S16;
+            } else if(!stringValue.isEmpty()) {
+                System.out.println("yeee");
+                hlt = DataType.Str;
+                type = LowLevelType.String8;
+            } else if(floatValue != 0) {
+                hlt = DataType.Flt;
+                type = LowLevelType.F32;
+            } else {
+                hlt = DataType.Int;
+                type = LowLevelType.S8;
+            }
+        }
+
         if(hlt.isInteger()) {
             bytes = type.toBytes(intValue);
         } else if(hlt.isFloat()) {
@@ -50,9 +67,10 @@ public class Argument implements Compilable {
         }
 
         if(bytes == null) {
-            System.err.println("Error: Unsupported type " + type + " cannot be compiled.");
-            System.exit(1);
-            return null;
+//            System.err.println("Error: Unsupported type " + type + " cannot be compiled.");
+//            System.exit(1);
+//            return null;
+            bytes = new int[1];
         }
 
         // Convert to a list and add the type identifier.

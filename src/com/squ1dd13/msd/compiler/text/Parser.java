@@ -47,7 +47,7 @@ public class Parser {
             }
 
             // We don't know the correct integer type to use.
-            return new Argument(LowLevelType.Unknown, argStr);
+            return new Argument(LowLevelType.Unknown, Integer.parseInt(argStr));
         }
 
         if(argStr.startsWith("'") && argStr.endsWith("'")) {
@@ -126,15 +126,26 @@ public class Parser {
         }
 
         String argList = Util.cropString(readUntil(reader, ")"));
-        String[] argStrs = argList.split(",");
-
-        for(String s : argStrs) {
-            parsedArgs.add(readArgument(new StringReader(s)));
-        }
 
         LowLevelCommand command = new LowLevelCommand();
-        command.arguments = parsedArgs;
-        command.command = Command.commands.get(CommandInfoDesk.getOpcode(name));
+        int opcode = CommandInfoDesk.getOpcode(name);
+
+        if(!argList.isBlank()) {
+            String[] argStrs = argList.split(",");
+
+            for(String s : argStrs) {
+                parsedArgs.add(readArgument(new StringReader(s)));
+            }
+
+            command.arguments = parsedArgs;
+
+            CommandInfoDesk.CommandInfo info = CommandInfoDesk.getInfo(opcode);
+            if(info == null || command.arguments.size() != info.lowLevelParamTypes.length) {
+                System.out.println("no info");
+            }
+        }
+
+        command.command = Command.commands.get(opcode);
 
         return command;
     }

@@ -30,7 +30,19 @@ public class LowLevelCommand implements Compilable {
 
         for(int i = 0; i < arguments.size(); i++) {
             Argument arg = arguments.get(i);
-            arg.type = info.lowLevelParamTypes[i];
+
+            if(arg == null) {
+                Util.emitWarning("Argument null");
+                continue;
+            }
+
+            if(info == null || info.lowLevelParamTypes == null) {
+                arg.type = LowLevelType.Unknown;
+                System.out.println("no infofff");
+            } else {
+                arg.type = info.lowLevelParamTypes[i];
+                System.out.println(arg.type);
+            }
 
             if(arg.type == LowLevelType.Unknown) {
                 arg.type = command.getParamInfo(i).type.guessLowLevelType();
