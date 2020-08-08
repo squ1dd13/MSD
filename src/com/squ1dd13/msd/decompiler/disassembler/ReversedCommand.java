@@ -5,8 +5,8 @@ import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
 
-public class CompiledCommand {
-    public static class CompiledArgument {
+public class ReversedCommand {
+    public static class ReversedArgument {
         public int typeCode;
         public int[] valueBytes;
         public int length;
@@ -15,7 +15,7 @@ public class CompiledCommand {
             return LowLevelType.decode(typeCode);
         }
 
-        public CompiledArgument(int[] bytes) {
+        public ReversedArgument(int[] bytes) {
             typeCode = bytes[0];
 
             valueBytes = new int[bytes.length - 1];
@@ -67,11 +67,11 @@ public class CompiledCommand {
     }
 
     public int opcode;
-    public List<CompiledArgument> compiledArguments = new ArrayList<>();
+    public List<ReversedArgument> reversedArguments = new ArrayList<>();
     public int length;
     public int offset;
 
-    public CompiledCommand(int[] bytes) {
+    public ReversedCommand(int[] bytes) {
         opcode = bytes[0] | bytes[1] << 8;
 
         if(opcode == 0) {
@@ -100,9 +100,9 @@ public class CompiledCommand {
                 byteList.subList(byteIndex, byteList.size())
             );
 
-            var arg = new CompiledArgument(nextBytes);
+            var arg = new ReversedArgument(nextBytes);
             arg.toDataValue();
-            compiledArguments.add(arg);
+            reversedArguments.add(arg);
             byteIndex += arg.length;
         }
 
@@ -111,11 +111,11 @@ public class CompiledCommand {
 
     public Command toCommand() {
         Command base = Command.commands.get(opcode).copy();
-        base.arguments = new DataValue[compiledArguments.size()];
+        base.arguments = new DataValue[reversedArguments.size()];
         base.offset = offset;
 
-        for(int i = 0; i < compiledArguments.size(); ++i) {
-            base.arguments[i] = compiledArguments.get(i).toDataValue();
+        for(int i = 0; i < reversedArguments.size(); ++i) {
+            base.arguments[i] = reversedArguments.get(i).toDataValue();
         }
 
         return base;

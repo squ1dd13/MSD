@@ -7,19 +7,20 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-public class CompiledSCM {
-    public List<CompiledCommand> commands = new ArrayList<>();
+public class SCM {
+    public List<ReversedCommand> commands = new ArrayList<>();
 
-    public CompiledSCM(String filePath) throws IOException {
+    public SCM(String filePath) throws IOException {
         int[] bytes = Util.byteArrayToIntArray(Files.readAllBytes(Paths.get(filePath)));
 
         for(int i = 0; i < bytes.length;) {
             int[] commandBytes = Util.subArray(bytes, i, bytes.length);
 
-            CompiledCommand command = new CompiledCommand(commandBytes);
+            ReversedCommand command = new ReversedCommand(commandBytes);
             command.offset = i;
             if(command.opcode == Integer.MAX_VALUE) break;
             commands.add(command);
+            Registry.getCommand(command.opcode).addReversed(command);
 
             i += command.length;
         }
@@ -29,7 +30,7 @@ public class CompiledSCM {
         LowScript script = new LowScript();
 
         for(int i = 0; i < commands.size(); i++) {
-            CompiledCommand command = commands.get(i);
+            ReversedCommand command = commands.get(i);
 
             Command realCommand = command.toCommand();
             realCommand.scriptIndex = i;

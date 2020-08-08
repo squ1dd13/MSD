@@ -1,6 +1,5 @@
 package com.squ1dd13.msd.compiler.constructs.language;
 
-import com.squ1dd13.msd.compiler.constructs.*;
 import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.shared.*;
 
@@ -12,7 +11,7 @@ public class ClassConstruct {
         public String name;
         public int opcode;
         public LowLevelType[] paramTypes;
-        public DataType[] highLevelTypes;
+        public HighLevelType[] highLevelTypes;
 
         // TODO: Be stricter with whitespace in regexes.
 
@@ -23,7 +22,7 @@ public class ClassConstruct {
                 StubMethod stub = new StubMethod();
 
                 stub.paramTypes = CommandInfoDesk.getInfo(cmd.opcode).lowLevelParamTypes;
-                stub.highLevelTypes = new DataType[stub.paramTypes.length];
+                stub.highLevelTypes = new HighLevelType[stub.paramTypes.length];
                 stub.name = cmd.name.substring(0, cmd.name.indexOf("("));
                 stub.opcode = cmd.opcode;
 
@@ -58,7 +57,7 @@ public class ClassConstruct {
             StringBuilder dataBuilder = new StringBuilder();
 
             for(int i = 0; i < highLevelTypes.length; i++) {
-                DataType type = highLevelTypes[i];
+                HighLevelType type = highLevelTypes[i];
                 paramBuilder.append(Typename.get(type)).append(" param").append(i + 1);
 
                 dataBuilder.append(paramTypes[i].ordinal());

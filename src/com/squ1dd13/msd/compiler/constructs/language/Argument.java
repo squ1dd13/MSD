@@ -1,7 +1,6 @@
 package com.squ1dd13.msd.compiler.constructs.language;
 
 import com.squ1dd13.msd.compiler.constructs.*;
-import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
@@ -37,23 +36,23 @@ public class Argument implements Compilable {
 
     @Override
     public Collection<Integer> compile(Context context) {
-        DataType hlt = type.highLevelType();
+        HighLevelType hlt = type.highLevelType();
 
         int[] bytes = null;
 
-        if(hlt == DataType.End) {
+        if(hlt == HighLevelType.End) {
             if(intValue != 0) {
-                hlt = DataType.Int;
+                hlt = HighLevelType.Int;
                 type = LowLevelType.S16;
             } else if(!stringValue.isEmpty()) {
                 System.out.println("yeee");
-                hlt = DataType.Str;
+                hlt = HighLevelType.Str;
                 type = LowLevelType.String8;
             } else if(floatValue != 0) {
-                hlt = DataType.Flt;
+                hlt = HighLevelType.Flt;
                 type = LowLevelType.F32;
             } else {
-                hlt = DataType.Int;
+                hlt = HighLevelType.Int;
                 type = LowLevelType.S8;
             }
         }

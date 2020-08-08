@@ -1,10 +1,8 @@
-package com.squ1dd13.msd.decompiler.shared;
+package com.squ1dd13.msd.shared;
 
-import com.squ1dd13.msd.shared.*;
-
-public enum DataType {
+public enum HighLevelType {
     // There are fewer types here than in the disassembler because
-    //  the disassembler needs to know more types. Here, we can use higher-level
+    //  the disassembler needs to know all of the types. Here, we can use higher-level
     //  data types that abstract sizing details and such.
 
     End,
@@ -88,7 +86,7 @@ public enum DataType {
         return LowLevelType.Unknown;
     }
 
-    public static DataType typeForString(String s) {
+    public static HighLevelType typeForString(String s) {
         char c = s.charAt(0);
 
         switch(c) {
@@ -139,7 +137,7 @@ public enum DataType {
         }
     }
 
-    public DataType getAbsolute() {
+    public HighLevelType getAbsolute() {
         if(isFloat()) return Flt;
         if(isInteger()) return Int;
         if(isString()) return Str;

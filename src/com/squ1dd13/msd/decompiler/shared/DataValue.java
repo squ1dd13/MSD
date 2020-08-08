@@ -1,9 +1,10 @@
 package com.squ1dd13.msd.decompiler.shared;
 
 import com.squ1dd13.msd.decompiler.high.*;
+import com.squ1dd13.msd.shared.*;
 
 public class DataValue {
-    public DataType type = DataType.Unknown;
+    public HighLevelType type = HighLevelType.Unknown;
     public String stringValue;
     public int intValue;
     public float floatValue;
@@ -16,17 +17,17 @@ public class DataValue {
             return;
         }
 
-        type = DataType.typeForString(s);
+        type = HighLevelType.typeForString(s);
 
-        if(type == DataType.Str) {
+        if(type == HighLevelType.Str) {
             stringValue = s;
-        } else if(type == DataType.Int
-            || type == DataType.GlobalIntFloat
-            || type == DataType.GlobalStr
-            || type == DataType.LocalIntFloat
-            || type == DataType.LocalStr) {
+        } else if(type == HighLevelType.Int
+            || type == HighLevelType.GlobalIntFloat
+            || type == HighLevelType.GlobalStr
+            || type == HighLevelType.LocalIntFloat
+            || type == HighLevelType.LocalStr) {
             intValue = Integer.parseInt(s.substring(1));
-        } else if(type == DataType.Flt) {
+        } else if(type == HighLevelType.Flt) {
             floatValue = Float.parseFloat(s.substring(1));
         }
     }

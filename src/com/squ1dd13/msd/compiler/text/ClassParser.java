@@ -1,7 +1,6 @@
 package com.squ1dd13.msd.compiler.text;
 
 import com.squ1dd13.msd.compiler.constructs.language.*;
-import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
@@ -55,7 +54,7 @@ public class ClassParser {
             stub.opcode = Integer.parseInt(stubOpcode);
 
             stub.paramTypes = new LowLevelType[stubArgTypes.length];
-            stub.highLevelTypes = new DataType[stubArgTypes.length];
+            stub.highLevelTypes = new HighLevelType[stubArgTypes.length];
 
             for(int j = 0; j < stubArgTypes.length; ++j) {
                 var s = stubArgTypes[j].strip();

@@ -1,9 +1,9 @@
 package com.squ1dd13.msd.compiler.constructs.language;
 
-import com.squ1dd13.msd.decompiler.shared.*;
+import com.squ1dd13.msd.shared.*;
 
 public class Typename {
-    public static String get(DataType type) {
+    public static String get(HighLevelType type) {
         switch(type) {
             case Int:
                 return "int";

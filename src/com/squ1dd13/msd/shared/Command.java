@@ -63,6 +63,7 @@ public class Command {
 
                 Command command = new Command(opcode, name);
                 command.parseParamTypes();
+                Registry.addCommand(command);
 
                 commands.put(opcode, command);
             }
@@ -73,34 +74,39 @@ public class Command {
     }
 
     private void parseParamTypes() {
-        String paramList = name.substring(name.indexOf('(') + 1, name.length() - 1);
-        if(paramList.isEmpty()) return;
-
-        String[] typeStrings = paramList.split(",");
-
-        paramInfo = new ParamInfo[typeStrings.length];
-        for(int i = 0; i < typeStrings.length; ++i) {
-            paramInfo[i] = ParamInfo.fromString(typeStrings[i]);
-        }
+//        String paramList = name.substring(name.indexOf('(') + 1, name.length() - 1);
+//        if(paramList.isEmpty()) return;
+//
+//        String[] typeStrings = paramList.split(",");
+//
+//        paramInfo = new ParamInfo[typeStrings.length];
+//        for(int i = 0; i < typeStrings.length; ++i) {
+//            paramInfo[i] = ParamInfo.fromString(typeStrings[i]);
+//        }
     }
 
     public ParamInfo getParamInfo(int paramIndex) {
-        if(paramInfo == null || paramInfo.length <= paramIndex) return null;
+        var paramType = Registry.getCommand(opcode).parameterTypes.get(paramIndex);
 
-        return paramInfo[paramIndex];
+        return new ParamInfo(
+            paramType.getHighLevel(),
+            paramType.getHighLevel().getAbsolute(),
+            true,
+            paramType.getLowLevel()
+        );
     }
 
     public void setParamInfo(int paramIndex, ParamInfo info) {
-        if(paramInfo == null) {
-            paramInfo = new ParamInfo[arguments.length];
-        }
-
-        if(paramInfo.length <= paramIndex) {
-            System.out.println("out of bounds write for sPI()");
-            return;
-        }
-
-        paramInfo[paramIndex] = info;
+//        if(paramInfo == null) {
+//            paramInfo = new ParamInfo[arguments.length];
+//        }
+//
+//        if(paramInfo.length <= paramIndex) {
+//            System.out.println("out of bounds write for sPI()");
+//            return;
+//        }
+//
+//        paramInfo[paramIndex] = info;
     }
 
     public String formattedString() {

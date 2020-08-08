@@ -1,7 +1,5 @@
 package com.squ1dd13.msd.shared;
 
-import com.squ1dd13.msd.decompiler.shared.*;
-
 public enum LowLevelType {
     // This enum has all of the types that exist in GTA: SA's SCM files.
     // An SCM disassembler must know all of these, but a decompiler can use
@@ -139,54 +137,54 @@ public enum LowLevelType {
         return bytes;
     }
 
-    public DataType highLevelType() {
+    public HighLevelType highLevelType() {
         switch(this) {
             case String8:
             case String16:
             case StringVar:
-                return DataType.Str;
+                return HighLevelType.Str;
 
             case End:
-                return DataType.End;
+                return HighLevelType.End;
 
             case GlobalIntFloat:
-                return DataType.GlobalIntFloat;
+                return HighLevelType.GlobalIntFloat;
 
             case LocalIntFloat:
-                return DataType.LocalIntFloat;
+                return HighLevelType.LocalIntFloat;
 
             case S8:
             case S16:
             case S32:
-                return DataType.Int;
+                return HighLevelType.Int;
 
             case F32:
-                return DataType.Flt;
+                return HighLevelType.Flt;
 
             case GlobalIntFloatArr:
-                return DataType.GlobalIntFloatArr;
+                return HighLevelType.GlobalIntFloatArr;
 
             case LocalIntFloatArr:
-                return DataType.LocalIntFloatArr;
+                return HighLevelType.LocalIntFloatArr;
 
             case GlobalString8:
             case GlobalString16:
-                return DataType.GlobalStr;
+                return HighLevelType.GlobalStr;
 
             case LocalString8:
             case LocalString16:
-                return DataType.LocalStr;
+                return HighLevelType.LocalStr;
 
             case GlobalString8Arr:
             case GlobalString16Arr:
-                return DataType.GlobalStrArr;
+                return HighLevelType.GlobalStrArr;
 
             case LocalString8Arr:
             case LocalString16Arr:
-                return DataType.LocalStrArr;
+                return HighLevelType.LocalStrArr;
 
             default:
-                return DataType.Unknown;
+                return HighLevelType.Unknown;
         }
     }
 }

@@ -4,10 +4,10 @@ import com.squ1dd13.msd.shared.*;
 
 public class ParamInfo {
     // The type can be anything: int, float, reference to int, reference to float, etc.
-    public DataType type;
+    public HighLevelType type;
 
     // The absolute type is the type of the value. This cannot be a reference type.
-    public DataType absoluteType;
+    public HighLevelType absoluteType;
 
     // Whether or not a value is stored in this variable by the command.
     // This can only be true when type is a reference type.
@@ -15,7 +15,7 @@ public class ParamInfo {
 
     public LowLevelType lowLevelType;
 
-    public ParamInfo(DataType type, DataType absoluteType, boolean isOutVal, LowLevelType lowLevelType) {
+    public ParamInfo(HighLevelType type, HighLevelType absoluteType, boolean isOutVal, LowLevelType lowLevelType) {
         this.type = type;
         this.absoluteType = absoluteType;
         this.isOutVal = isOutVal;
@@ -26,35 +26,35 @@ public class ParamInfo {
     private static ParamInfo fromStringInternal(String s) {
         switch(s) {
             case "vf":
-                return new ParamInfo(DataType.GlobalIntFloat, DataType.Flt, false, LowLevelType.GlobalIntFloat);
+                return new ParamInfo(HighLevelType.GlobalIntFloat, HighLevelType.Flt, false, LowLevelType.GlobalIntFloat);
 
             case "vi":
-                return new ParamInfo(DataType.GlobalIntFloat, DataType.Int, false, LowLevelType.GlobalIntFloat);
+                return new ParamInfo(HighLevelType.GlobalIntFloat, HighLevelType.Int, false, LowLevelType.GlobalIntFloat);
 
             case "lf":
-                return new ParamInfo(DataType.LocalIntFloat, DataType.Flt, false, LowLevelType.LocalIntFloat);
+                return new ParamInfo(HighLevelType.LocalIntFloat, HighLevelType.Flt, false, LowLevelType.LocalIntFloat);
 
             case "li":
-                return new ParamInfo(DataType.LocalIntFloat, DataType.Int, false, LowLevelType.LocalIntFloat);
+                return new ParamInfo(HighLevelType.LocalIntFloat, HighLevelType.Int, false, LowLevelType.LocalIntFloat);
 
             case "f":
                 // Can still be a reference type if there is an equals sign.
-                return new ParamInfo(DataType.Flt, DataType.Flt, false, LowLevelType.Unknown);
+                return new ParamInfo(HighLevelType.Flt, HighLevelType.Flt, false, LowLevelType.Unknown);
 
             case "i":
-                return new ParamInfo(DataType.Int, DataType.Int, false, LowLevelType.Unknown);
+                return new ParamInfo(HighLevelType.Int, HighLevelType.Int, false, LowLevelType.Unknown);
 
             case "vt":
-                return new ParamInfo(DataType.GlobalStr, DataType.Str, false, LowLevelType.Unknown);
+                return new ParamInfo(HighLevelType.GlobalStr, HighLevelType.Str, false, LowLevelType.Unknown);
 
             case "lt":
-                return new ParamInfo(DataType.LocalStr, DataType.Str, false, LowLevelType.Unknown);
+                return new ParamInfo(HighLevelType.LocalStr, HighLevelType.Str, false, LowLevelType.Unknown);
 
             case "t":
-                return new ParamInfo(DataType.Str, DataType.Str, false, LowLevelType.Unknown);
+                return new ParamInfo(HighLevelType.Str, HighLevelType.Str, false, LowLevelType.Unknown);
 
             case "p":
-                return new ParamInfo(DataType.Int, DataType.Int, false, LowLevelType.S32);
+                return new ParamInfo(HighLevelType.Int, HighLevelType.Int, false, LowLevelType.S32);
         }
 
         return null;
