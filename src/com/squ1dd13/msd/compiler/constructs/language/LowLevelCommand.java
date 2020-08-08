@@ -28,6 +28,7 @@ public class LowLevelCommand implements Compilable {
 
         CommandInfoDesk.CommandInfo info = CommandInfoDesk.getInfo(command.opcode);
 
+//        System.out.print(command.name + " [");
         for(int i = 0; i < arguments.size(); i++) {
             Argument arg = arguments.get(i);
 
@@ -36,12 +37,23 @@ public class LowLevelCommand implements Compilable {
                 continue;
             }
 
-            if(info == null || info.lowLevelParamTypes == null) {
-                arg.type = LowLevelType.Unknown;
-                System.out.println("no infofff");
-            } else {
-                arg.type = info.lowLevelParamTypes[i];
-                System.out.println(arg.type);
+            var paramInfo = command.getParamInfo(i);
+
+            if(paramInfo != null) {
+                var llt = command.getParamInfo(i).lowLevelType;
+                if(llt != LowLevelType.Unknown) {
+                    arg.type = llt;
+                }
+            }
+
+            if(arg.type == LowLevelType.Unknown) {
+                if(info == null || info.lowLevelParamTypes == null) {
+                    arg.type = LowLevelType.Unknown;
+//                    System.out.println("no infofff");
+                } else {
+                    arg.type = info.lowLevelParamTypes[i];
+//                    System.out.println(arg.type);
+                }
             }
 
             if(arg.type == LowLevelType.Unknown) {
@@ -49,7 +61,10 @@ public class LowLevelCommand implements Compilable {
             }
 
             compiled.addAll(arg.compile(context));
+//            System.out.print(arg.type + ", ");
         }
+
+//        System.out.print("]\n");
 
         return compiled;
     }

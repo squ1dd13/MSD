@@ -15,10 +15,20 @@ public class Util {
         };
     }
 
+    public static int[] intToBytesLE(int v, int n) {
+        int[] bytes = new int[n];
+
+        for(int i = 0; i < n; ++i) {
+            bytes[i] = (v >> (i * 8)) & 0xFF;
+        }
+
+        return bytes;
+    }
+
     public static int[] byteArrayToIntArray(byte[] buf) {
         int[] array = new int[buf.length];
         for (int i = 0; i < array.length; i++) {
-            array[i] = buf[i];
+            array[i] = buf[i] & 0xFF;
         }
         return array;
     }
@@ -30,6 +40,29 @@ public class Util {
         return byteArrayToIntArray(buffer.putFloat(f).array());
     }
 
+    public static int intFromBytesLE(int[] bytes, int n) {
+        int v = 0;
+
+        for(int i = 0; i < n; ++i) {
+            v |= (bytes[i] << (i * 8));
+        }
+
+        return v;
+    }
+
+    public static int intFromBytesLE(int[] bytes) {
+        return intFromBytesLE(bytes, 4);
+    }
+
+    public static float floatFromBytesLE(int[] bytes) {
+        int asInt = (bytes[0] & 0xFF)
+            | ((bytes[1] & 0xFF) << 8)
+            | ((bytes[2] & 0xFF) << 16)
+            | ((bytes[3] & 0xFF) << 24);
+
+        return Float.intBitsToFloat(asInt);
+    }
+
     public static List<Integer> intArrayToList(int[] arr) {
         List<Integer> list = new ArrayList<>(arr.length);
 
@@ -38,6 +71,16 @@ public class Util {
         }
 
         return list;
+    }
+
+    public static int[] intListToArray(List<Integer> list) {
+        int[] arr  = new int[list.size()];
+
+        for(int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+
+        return arr;
     }
 
     public static void emitFatalError(String s) {
@@ -89,5 +132,14 @@ public class Util {
         } catch(IOException e) {
             System.out.println("Write failed");
         }
+    }
+
+    public static<T> T[] takeSome(T[] array, int num) {
+        return Arrays.copyOfRange(array, 0, num);
+    }
+
+    public static int[] subArray(int[] arr, int start, int end) {
+        // FIXME: Very inefficient
+        return intListToArray(intArrayToList(arr).subList(start, end));
     }
 }

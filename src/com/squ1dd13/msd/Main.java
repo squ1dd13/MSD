@@ -2,6 +2,7 @@ package com.squ1dd13.msd;
 
 import com.squ1dd13.msd.compiler.constructs.language.*;
 import com.squ1dd13.msd.compiler.text.*;
+import com.squ1dd13.msd.decompiler.disassembler.*;
 import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.decompiler.low.*;
 import com.squ1dd13.msd.shared.*;
@@ -11,25 +12,10 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        System.out.println("MSD v1.0 Beta");
-
-        Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
-        CommandInfoDesk.loadCommandNames();
-        CommandInfoDesk.loadFile("/Users/squ1dd13/Documents/MSD-Project/llp.txt");
-
-        System.out.println(CommandInfoDesk.getInfo(0x3A4));
-
-        LowScript script = LowScript.load("/Users/squ1dd13/Documents/trains.txt");
-
-        HighLevelScript highLevelScript = new HighLevelScript(script);
-        highLevelScript.print();
-
+    public static void compile(String inPath, String outPath) throws IOException {
         List<String> lines = new ArrayList<>();
 
-        String scriptPath = "/Users/squ1dd13/Documents/MSD-Project/script.msd";
-//        Files.createFile(Paths.get(scriptPath));
-        try(BufferedReader reader = new BufferedReader(new FileReader(scriptPath))) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(inPath))) {
             String ln;
 
             while((ln = reader.readLine()) != null) {
@@ -40,15 +26,25 @@ public class Main {
         Parser parser = new Parser();
 
         var scm = parser.parse(lines);
-        scm.compileAndWrite("/Users/squ1dd13/Documents/MSD-Project/compiled.scm");
-//        script.print();
+        scm.compileAndWrite(outPath);
+    }
 
-//        var classLines = Util.readLines("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/code/defs.msd");
-//        ClassConstruct theClass = ClassParser.parseClass(classLines);
-//
-//        System.out.println(theClass);
-//
-//        ClassConstruct currentClass = ClassConstruct.buildClass();
-//        Util.writeToFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/code/Game.msd", currentClass.toString());
+    public static void main(String[] args) throws IOException {
+        System.out.println("MSD v1.0 Beta");
+
+        Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
+        CommandInfoDesk.loadCommandNames();
+        CommandInfoDesk.loadFile("/Users/squ1dd13/Documents/MSD-Project/llp.txt");
+
+        CompiledSCM scm = new CompiledSCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
+        LowScript script = scm.toScript();
+
+        HighLevelScript highLevelScript = new HighLevelScript(script);
+        highLevelScript.print();
+
+        compile(
+            "/Users/squ1dd13/Documents/MSD-Project/script.msd",
+            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
+        );
     }
 }

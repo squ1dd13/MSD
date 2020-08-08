@@ -1,5 +1,7 @@
 package com.squ1dd13.msd.decompiler.shared;
 
+import com.squ1dd13.msd.shared.*;
+
 public class ParamInfo {
     // The type can be anything: int, float, reference to int, reference to float, etc.
     public DataType type;
@@ -11,42 +13,48 @@ public class ParamInfo {
     // This can only be true when type is a reference type.
     public boolean isOutVal = false;
 
-    public ParamInfo(DataType type, DataType absoluteType, boolean isOutVal) {
+    public LowLevelType lowLevelType;
+
+    public ParamInfo(DataType type, DataType absoluteType, boolean isOutVal, LowLevelType lowLevelType) {
         this.type = type;
         this.absoluteType = absoluteType;
         this.isOutVal = isOutVal;
+        this.lowLevelType = lowLevelType;
     }
 
     // Only handles past the '=' (i.e. does not set isOutVal).
     private static ParamInfo fromStringInternal(String s) {
         switch(s) {
             case "vf":
-                return new ParamInfo(DataType.GlobalIntFloat, DataType.Flt, false);
+                return new ParamInfo(DataType.GlobalIntFloat, DataType.Flt, false, LowLevelType.GlobalIntFloat);
 
             case "vi":
-                return new ParamInfo(DataType.GlobalIntFloat, DataType.Int, false);
+                return new ParamInfo(DataType.GlobalIntFloat, DataType.Int, false, LowLevelType.GlobalIntFloat);
 
             case "lf":
-                return new ParamInfo(DataType.LocalIntFloat, DataType.Flt, false);
+                return new ParamInfo(DataType.LocalIntFloat, DataType.Flt, false, LowLevelType.LocalIntFloat);
 
             case "li":
-                return new ParamInfo(DataType.LocalIntFloat, DataType.Int, false);
+                return new ParamInfo(DataType.LocalIntFloat, DataType.Int, false, LowLevelType.LocalIntFloat);
 
             case "f":
                 // Can still be a reference type if there is an equals sign.
-                return new ParamInfo(DataType.Flt, DataType.Flt, false);
+                return new ParamInfo(DataType.Flt, DataType.Flt, false, LowLevelType.Unknown);
 
             case "i":
-                return new ParamInfo(DataType.Int, DataType.Int, false);
+                return new ParamInfo(DataType.Int, DataType.Int, false, LowLevelType.Unknown);
 
             case "vt":
-                return new ParamInfo(DataType.GlobalStr, DataType.Str, false);
+                return new ParamInfo(DataType.GlobalStr, DataType.Str, false, LowLevelType.Unknown);
 
             case "lt":
-                return new ParamInfo(DataType.LocalStr, DataType.Str, false);
+                return new ParamInfo(DataType.LocalStr, DataType.Str, false, LowLevelType.Unknown);
 
             case "t":
-                return new ParamInfo(DataType.Str, DataType.Str, false);
+                return new ParamInfo(DataType.Str, DataType.Str, false, LowLevelType.Unknown);
+
+            case "p":
+                return new ParamInfo(DataType.Int, DataType.Int, false, LowLevelType.S32);
         }
 
         return null;
@@ -64,6 +72,9 @@ public class ParamInfo {
                 base.isOutVal = true;
             } else {
                 base = fromStringInternal(s);
+//                if(base.absoluteType == DataType.Int && base.lowLevelType == LowLevelType.Unknown) {
+//                    base.lowLevelType = LowLevelType.S16;
+//                }
             }
 
             return base;

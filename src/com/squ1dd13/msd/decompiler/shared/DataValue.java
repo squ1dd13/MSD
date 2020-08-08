@@ -8,6 +8,8 @@ public class DataValue {
     public int intValue;
     public float floatValue;
 
+    public DataValue(){}
+
     public DataValue(String s) {
         if(s.length() < 2) {
             System.err.println("Can't parse " + s);
@@ -56,7 +58,7 @@ public class DataValue {
                 return intValue + "";
 
             case Str:
-                return stringValue;
+                return "'" + stringValue + "'";
         }
 
         final String base = "(" + type.name() + ")";

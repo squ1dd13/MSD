@@ -139,10 +139,10 @@ public class Parser {
 
             command.arguments = parsedArgs;
 
-            CommandInfoDesk.CommandInfo info = CommandInfoDesk.getInfo(opcode);
-            if(info == null || command.arguments.size() != info.lowLevelParamTypes.length) {
-                System.out.println("no info");
-            }
+//            CommandInfoDesk.CommandInfo info = CommandInfoDesk.getInfo(opcode);
+//            if(info == null || command.arguments.size() != info.lowLevelParamTypes.length) {
+//                System.out.println("no info");
+//            }
         }
 
         command.command = Command.commands.get(opcode);

@@ -62,7 +62,7 @@ public enum DataType {
             case Unknown:
                 return LowLevelType.Unknown;
             case Int:
-                return LowLevelType.S32;
+                return LowLevelType.S16;
             case Flt:
                 return LowLevelType.F32;
             case Str:

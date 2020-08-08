@@ -67,7 +67,7 @@ public class Argument implements Compilable {
         }
 
         if(bytes == null) {
-//            System.err.println("Error: Unsupported type " + type + " cannot be compiled.");
+            System.err.println("Error: Unsupported type " + type + " cannot be compiled.");
 //            System.exit(1);
 //            return null;
             bytes = new int[1];
@@ -75,7 +75,11 @@ public class Argument implements Compilable {
 
         // Convert to a list and add the type identifier.
         var byteList = Util.intArrayToList(bytes);
-        byteList.add(0, hlt.ordinal());
+        if(type.highLevelType().isInteger()) {
+            byteList = byteList.subList(0, type.valueLength());
+        }
+
+        byteList.add(0, type.ordinal());
 
         return byteList;
     }

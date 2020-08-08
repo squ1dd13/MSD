@@ -45,7 +45,7 @@ public class ClassConstruct {
             for(int i = 0; i < highLevelTypes.length; ++i) {
                 var type = highLevelTypes[i];
                 command.arguments[i].type = type;
-                command.setParamInfo(i, new ParamInfo(type, type.getAbsolute(), true));
+                command.setParamInfo(i, new ParamInfo(type, type.getAbsolute(), true, paramTypes[i]));
             }
 
             return command;

@@ -87,28 +87,29 @@ public enum LowLevelType {
 
     public int[] toBytes(int value) {
         // +1 for the identifier byte.
-        int[] bytes = new int[valueLength() + 1];
-        bytes[0] = num;
+//        int[] bytes = new int[valueLength() + 1];
+//        bytes[0] = num;
 
         int[] valueBytes = Util.intToBytesLE(value);
-        System.arraycopy(valueBytes, 0, bytes, 1, bytes.length - 1);
-
-        return bytes;
+//        System.arraycopy(valueBytes, 0, bytes, 1, bytes.length - 1);
+//
+//        return bytes;
+        return valueBytes;
     }
 
     public int[] toBytes(float value) {
-        int[] bytes = new int[valueLength() + 1];
-        bytes[0] = num;
+//        int[] bytes = new int[valueLength() + 1];
+//        bytes[0] = num;
 
         int[] valueBytes = Util.floatToBytesLE(value);
 
-        for(int i = 1; i < bytes.length; ++i) {
-            bytes[i] = valueBytes[i - 1];
-        }
+//        for(int i = 1; i < bytes.length; ++i) {
+//            bytes[i] = valueBytes[i - 1];
+//        }
 
 //        System.arraycopy(valueBytes, 0, bytes, 1, bytes.length - 1);
 
-        return bytes;
+        return valueBytes;
     }
 
 //    A4 03 09 54 52 41 49 4E 53 00 00 05 00 02 D4 94 06
