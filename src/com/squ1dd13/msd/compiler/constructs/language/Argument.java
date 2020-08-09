@@ -5,7 +5,7 @@ import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
 
-public class Argument implements Compilable {
+public class Argument {
     public LowLevelType type = LowLevelType.Unknown;
 
     public int intValue = 0;
@@ -34,7 +34,6 @@ public class Argument implements Compilable {
         this.stringValue = stringValue;
     }
 
-    @Override
     public Collection<Integer> compile(Context context) {
         HighLevelType hlt = type.highLevelType();
 

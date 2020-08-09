@@ -5,6 +5,7 @@ import com.squ1dd13.msd.decompiler.shared.*;
 import java.io.*;
 import java.util.*;
 
+// FIXME: Parameter type inference is broken.
 public class Command {
     public static final Map<Integer, Command> commands = new HashMap<>();
 
@@ -63,7 +64,7 @@ public class Command {
 
                 Command command = new Command(opcode, name);
                 command.parseParamTypes();
-                Registry.addCommand(command);
+                CommandRegistry.addCommand(command);
 
                 commands.put(opcode, command);
             }
@@ -86,12 +87,12 @@ public class Command {
     }
 
     public ParamInfo getParamInfo(int paramIndex) {
-        var paramType = Registry.getCommand(opcode).parameterTypes.get(paramIndex);
+        var paramType = CommandRegistry.getCommand(opcode).parameterTypes.get(paramIndex);
 
         return new ParamInfo(
             paramType.getHighLevel(),
             paramType.getHighLevel().getAbsolute(),
-            true,
+            false,
             paramType.getLowLevel()
         );
     }

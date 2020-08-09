@@ -17,9 +17,15 @@ public class LowLevelCommand implements Compilable {
 //    }
 
     public List<Integer> getOpcodeBytes() {
+        // It's better to use the command registry to get the opcode.
+        // It makes sure we're fetching the compilable opcode.
+        int opcode = CommandRegistry.getCommand(command).getOpcode();
+
+//        System.out.println("Opcode = " + Integer.toHexString(opcode));
+
         // We need the opcode bytes in little-endian, and then we only want the sublist 0->2,
         //  because the opcode is only 2 bytes long.
-        return Util.intArrayToList(Util.intToBytesLE(command.opcode)).subList(0, 2);
+        return Util.intArrayToList(Util.intToBytesLE(opcode)).subList(0, 2);
     }
 
     @Override
@@ -57,6 +63,7 @@ public class LowLevelCommand implements Compilable {
             }
 
             if(arg.type == LowLevelType.Unknown) {
+                Util.emitWarning("Guessing type of arg for " + CommandRegistry.getCommand(command).name);
                 arg.type = command.getParamInfo(i).type.guessLowLevelType();
             }
 
@@ -67,5 +74,21 @@ public class LowLevelCommand implements Compilable {
 //        System.out.print("]\n");
 
         return compiled;
+    }
+
+    @Override
+    public Collection<LowLevelCommand> toCommands(Context ctx) {
+        return new ArrayList<>(List.of(this));
+    }
+
+    public static LowLevelCommand create(int opcode, String name, Argument ...args) {
+        LowLevelCommand cmd = new LowLevelCommand();
+        cmd.command = new Command(
+            opcode,
+            name
+        );
+
+        cmd.arguments = Arrays.asList(args);
+        return cmd;
     }
 }

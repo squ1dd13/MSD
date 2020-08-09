@@ -138,11 +138,6 @@ public class Parser {
             }
 
             command.arguments = parsedArgs;
-
-//            CommandInfoDesk.CommandInfo info = CommandInfoDesk.getInfo(opcode);
-//            if(info == null || command.arguments.size() != info.lowLevelParamTypes.length) {
-//                System.out.println("no info");
-//            }
         }
 
         command.command = Command.commands.get(opcode);
@@ -150,10 +145,35 @@ public class Parser {
         return command;
     }
 
+    public static String removeStringLiterals(String s) {
+        try {
+            StringReader reader = new StringReader(s);
+            StringBuilder builder = new StringBuilder();
+
+            boolean inString = false;
+            int c;
+            while((c = reader.read()) != -1) {
+                if(c == '\'') {
+                    inString = !inString;
+                }
+
+                if(!inString) {
+                    builder.append((char)c);
+                }
+            }
+
+            return builder.toString();
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
     public CompiledScript parse(List<String> lines) throws IOException {
         CompiledScript script = new CompiledScript();
 
-        for(String line : lines) {
+        for(int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).strip();
+
             script.elements.add(readCommand(new StringReader(line)));
         }
 

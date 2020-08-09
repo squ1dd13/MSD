@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.*;
 
 // Shared information about commands.
-public class Registry implements Serializable {
+public class CommandRegistry implements Serializable {
     public static class CommandEntry implements Serializable {
         public static class ParameterType implements Serializable {
             public LowLevelType lowLevel;
@@ -37,7 +37,20 @@ public class Registry implements Serializable {
             }
         }
 
+        // Opcodes are weird. No wikis I've found mention this, but some opcodes
+        //  (normally condition opcodes) are compiled with an 8 on the front.
+        // For example, "is_player_playing" is always documented as having the
+        //  opcode 0x256. However, in the actual GTA SCM files, it appears as
+        //  0x8256.
+        //  MSD's disassembler removes this 8, but we need to know
+        //   that it was there.
+
+        // Without extra 8:
         public int opcode;
+
+        // With extra 8:
+        public int compiledOpcode = -1;
+
         public String name;
         public List<ParameterType> parameterTypes = new ArrayList<>();
 
@@ -75,28 +88,40 @@ public class Registry implements Serializable {
                     argument.lowLevelType().highLevelType().getAbsolute()
                 ));
             }
+
+            System.out.println("add " + Integer.toHexString(reversed.originalOpcode));
+//            compiledOpcode = Math.max(reversed.originalOpcode, compiledOpcode);
+
+            if((reversed.originalOpcode & 0xF000) > (compiledOpcode & 0xF000)) {
+                compiledOpcode = reversed.originalOpcode;
+            }
+        }
+
+        public int getOpcode() {
+//            System.out.println("return " + Integer.toHexString(compiledOpcode));
+            return compiledOpcode < 0 ? opcode : compiledOpcode;
         }
     }
 
     private final Map<Integer, CommandEntry> commandEntries = new HashMap<>();
 
-    private static Registry shared = null;
+    private static CommandRegistry shared = null;
 
     public static void init() {
         if(shared != null) {
-            throw new RuntimeException("Only one Registry is allowed");
+            throw new RuntimeException("Only one CommandRegistry is allowed");
         }
 
-        shared = new Registry();
+        shared = new CommandRegistry();
     }
 
     public static void load(String filePath) throws IOException, ClassNotFoundException {
         if(shared != null) {
-            throw new RuntimeException("Only one Registry is allowed");
+            throw new RuntimeException("Only one CommandRegistry is allowed");
         }
 
         ObjectInputStream stream = new ObjectInputStream(new FileInputStream(filePath));
-        shared = (Registry)stream.readObject();
+        shared = (CommandRegistry)stream.readObject();
         stream.close();
     }
 

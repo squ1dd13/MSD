@@ -7,7 +7,7 @@ import java.util.*;
 public class Util {
     // The SCM files use little-endian, so we need to be able to use that.
     public static int[] intToBytesLE(int v) {
-        return new int[] {
+        return new int[]{
             v & 0xFF,
             (v >> 8) & 0xFF,
             (v >> 16) & 0xFF,
@@ -27,7 +27,7 @@ public class Util {
 
     public static int[] byteArrayToIntArray(byte[] buf) {
         int[] array = new int[buf.length];
-        for (int i = 0; i < array.length; i++) {
+        for(int i = 0; i < array.length; i++) {
             array[i] = buf[i] & 0xFF;
         }
         return array;
@@ -74,7 +74,7 @@ public class Util {
     }
 
     public static int[] intListToArray(List<Integer> list) {
-        int[] arr  = new int[list.size()];
+        int[] arr = new int[list.size()];
 
         for(int i = 0; i < list.size(); i++) {
             arr[i] = list.get(i);
@@ -96,7 +96,9 @@ public class Util {
         return s.substring(0, s.length() - n);
     }
 
-    public static String cropString(String s) { return cropString(s, 1); }
+    public static String cropString(String s) {
+        return cropString(s, 1);
+    }
 
     public static String insetString(String s, int n) {
         return cropString(s, n).substring(n);
@@ -134,12 +136,20 @@ public class Util {
         }
     }
 
-    public static<T> T[] takeSome(T[] array, int num) {
+    public static <T> T[] takeSome(T[] array, int num) {
         return Arrays.copyOfRange(array, 0, num);
     }
 
     public static int[] subArray(int[] arr, int start, int end) {
         // FIXME: Very inefficient
         return intListToArray(intArrayToList(arr).subList(start, end));
+    }
+
+    public static int roundUpToMultiple(int n, int m) {
+        return (n + m - 1) / m * m;
+    }
+
+    public static int countOccurrences(String s, char c) {
+        return (int)s.chars().filter(ch -> ch == c).count();
     }
 }

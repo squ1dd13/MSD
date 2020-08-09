@@ -70,9 +70,11 @@ public class ReversedCommand {
     public List<ReversedArgument> reversedArguments = new ArrayList<>();
     public int length;
     public int offset;
+    public int originalOpcode;
 
     public ReversedCommand(int[] bytes) {
-        opcode = bytes[0] | bytes[1] << 8;
+        originalOpcode = opcode = bytes[0] | bytes[1] << 8;
+        System.out.println("opcode = " + Integer.toHexString(originalOpcode));
 
         if(opcode == 0) {
             opcode = Integer.MAX_VALUE;

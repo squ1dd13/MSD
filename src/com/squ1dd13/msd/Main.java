@@ -9,6 +9,9 @@ import com.squ1dd13.msd.shared.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
+
+import static java.nio.file.Files.list;
 
 public class Main {
     public static void compile(String inPath, String outPath) throws IOException {
@@ -31,29 +34,46 @@ public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         System.out.println("MSD v1.0 Beta");
 
-        String registryPath = "/Users/squ1dd13/Documents/MSD-Project/commands.msdreg";
-        if(Files.exists(Paths.get(registryPath))) {
-            Registry.load(registryPath);
-        } else {
-            Registry.init();
-        }
+        var tokens = Lexer.lex("doSomething(a, b, c, 'ee,e,e', 3.4f)");
+//        System.out.println(tokens);
 
-        Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
-        CommandInfoDesk.loadCommandNames();
-        CommandInfoDesk.loadFile("/Users/squ1dd13/Documents/MSD-Project/llp.txt");
+        NewParser newParser = new NewParser(tokens);
+        newParser.readCommand();
 
-        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
-        LowScript script = scm.toScript();
-
-        HighLevelScript highLevelScript = new HighLevelScript(script);
-        highLevelScript.print();
-
-        compile(
-            "/Users/squ1dd13/Documents/MSD-Project/script.msd",
-            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
-        );
-
-        System.out.println("Saving registry...");
-        Registry.save(registryPath);
+//        String registryPath = "/Users/squ1dd13/Documents/MSD-Project/commands.msdreg";
+//        if(Files.exists(Paths.get(registryPath))) {
+//            try {
+//                CommandRegistry.load(registryPath);
+//            } catch(Exception e) {
+//                CommandRegistry.init();
+//            }
+//        } else {
+//            CommandRegistry.init();
+//        }
+//
+//        Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
+//        CommandInfoDesk.loadCommandNames();
+//        CommandInfoDesk.loadFile("/Users/squ1dd13/Documents/MSD-Project/llp.txt");
+//
+//        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
+//        LowScript script = scm.toScript();
+//
+//        HighLevelScript highLevelScript = new HighLevelScript(script);
+//        highLevelScript.print();
+//
+//        compile(
+//            "/Users/squ1dd13/Documents/MSD-Project/script.msd",
+//            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
+//        );
+//
+//        Stream<Path> paths = Files.list(Paths.get("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts"));
+//        paths.forEach(path -> {
+//            long length = path.toFile().length();
+//            System.out.println(path.getFileName().toString() + " = " + length + " bytes");
+//            System.out.println("that's " + ((float)length / 2048.f) + " * 2048");
+//        });
+//
+//        System.out.println("Saving registry...");
+//        CommandRegistry.save(registryPath);
     }
 }

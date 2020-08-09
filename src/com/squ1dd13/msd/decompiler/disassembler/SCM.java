@@ -20,7 +20,7 @@ public class SCM {
             command.offset = i;
             if(command.opcode == Integer.MAX_VALUE) break;
             commands.add(command);
-            Registry.getCommand(command.opcode).addReversed(command);
+            CommandRegistry.getCommand(command.opcode).addReversed(command);
 
             i += command.length;
         }
