@@ -35,9 +35,16 @@ public class Conditional implements Compilable {
     }
 
     private List<LowLevelCommand> getElseBodyCommands(Context ctx) {
+        if(elseBodyElements == null) return new ArrayList<>();
+
         return elseBodyElements.stream().map(
             compilable -> compilable.toCommands(ctx)
         ).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        return "Conditional: " + toCommands(new Context());
     }
 
     @Override

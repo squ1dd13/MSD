@@ -88,7 +88,19 @@ public class LowLevelCommand implements Compilable {
             name
         );
 
-        cmd.arguments = Arrays.asList(args);
+        cmd.arguments = new ArrayList<>(Arrays.asList(args));
         return cmd;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(command.name).append("(");
+
+        for(int i = 0; i < arguments.size(); i++) {
+            Argument arg = arguments.get(i);
+            builder.append(arg.toString()).append(i == arguments.size() - 1 ? ")" : ", ");
+        }
+
+        return builder.toString();
     }
 }

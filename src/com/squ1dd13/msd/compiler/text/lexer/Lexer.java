@@ -1,117 +1,12 @@
-package com.squ1dd13.msd.compiler.text;
+package com.squ1dd13.msd.compiler.text.lexer;
 
+import com.squ1dd13.msd.compiler.text.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
 import java.util.*;
 
 public class Lexer {
-    public static class Token {
-        public boolean is(TokenType type) {
-            return this.type == type;
-        }
-
-        public boolean isNot(TokenType typ) {
-            return !is(typ);
-        }
-
-        public enum TokenType {
-            Whitespace,
-            Newline,
-            OpenBracket,
-            CloseBracket,
-            Comma,
-            OpenBrace,
-            CloseBrace,
-            IdentifierOrKeyword,
-            IntLiteral,
-            FloatLiteral,
-            StringLiteral
-        }
-
-        public TokenType type;
-
-        public static Token withType(TokenType type) {
-            Token t = new Token();
-            t.type = type;
-
-            return t;
-        }
-
-        private int ordinal() {
-            return type.ordinal();
-        }
-
-        public boolean hasText = false;
-        private String customText = null;
-        public String getText() {
-            if(customText != null) return customText;
-
-            final String[] defaults = new String[] {
-                " ",
-                "\n",
-                "(",
-                ")",
-                ",",
-                "{",
-                "}",
-                "?",
-                "?",
-                "?"
-            };
-
-            return ordinal() < defaults.length ? defaults[ordinal()] : "?";
-        }
-
-        public boolean hasFloat = false;
-        private float customFloat = 0;
-        public float getFloat() {
-            return customFloat;
-        }
-
-        public boolean hasInt = false;
-        private int customInt = 0;
-        public int getInteger() {
-            return customInt;
-        }
-
-        public Token withText(String s) {
-            Token t = this;
-            t.customText = s;
-            t.hasText = true;
-
-            return t;
-        }
-
-        public Token withInt(int i) {
-            Token t = this;
-            t.customInt = i;
-            t.hasInt = true;
-
-            return t;
-        }
-
-        public Token withFloat(float f) {
-            Token t = this;
-            t.customFloat = f;
-            t.hasFloat = true;
-
-            return t;
-        }
-
-        @Override
-        public String toString() {
-            String valueString = customText == null
-                ? getFloat() == 0 ? Integer.toString(getInteger()) : Float.toString(getFloat())
-                : "'" + customText + "'";
-
-            return String.format(
-                "Token(%s, %s)",
-                type.name(),
-                valueString
-            );
-        }
-    }
 
     private static Token readStringLiteral(CharacterReader reader) throws IOException {
         boolean escapeNext = false;
@@ -135,7 +30,9 @@ public class Lexer {
         return Character.isAlphabetic(c)
             || Character.isDigit(c)
             || c == '_'
-            || c == '?';
+            || c == '?'
+            || c == '.'
+            || c == '&';
     }
 
     private static Token readNumber(char first, CharacterReader reader) throws IOException {
@@ -200,6 +97,9 @@ public class Lexer {
 
             case ',':
                 return Token.withType(Token.TokenType.Comma);
+
+            case ';':
+                return Token.withType(Token.TokenType.Semicolon);
 
             case '{':
                 return Token.withType(Token.TokenType.OpenBrace);

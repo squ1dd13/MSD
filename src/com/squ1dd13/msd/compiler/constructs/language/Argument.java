@@ -34,6 +34,25 @@ public class Argument {
         this.stringValue = stringValue;
     }
 
+    @Override
+    public String toString() {
+        var hlt = type.highLevelType();
+
+        if(hlt.isInteger()) {
+            return Integer.toString(intValue);
+        }
+
+        if(hlt.isString()) {
+            return stringValue;
+        }
+
+        if(hlt.isFloat()) {
+            return Float.toString(floatValue);
+        }
+
+        return "<?>";
+    }
+
     public Collection<Integer> compile(Context context) {
         HighLevelType hlt = type.highLevelType();
 

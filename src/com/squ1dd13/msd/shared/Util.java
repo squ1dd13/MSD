@@ -152,4 +152,8 @@ public class Util {
     public static int countOccurrences(String s, char c) {
         return (int)s.chars().filter(ch -> ch == c).count();
     }
+
+    public static <T> List<T> between(List<T> list, T a, T b) {
+        return list.subList(list.indexOf(a) + 1, list.lastIndexOf(b));
+    }
 }

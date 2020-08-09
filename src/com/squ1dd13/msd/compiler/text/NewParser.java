@@ -1,11 +1,12 @@
 package com.squ1dd13.msd.compiler.text;
 
 import com.squ1dd13.msd.compiler.constructs.*;
-import com.squ1dd13.msd.compiler.text.Lexer.Token.*;
+import com.squ1dd13.msd.compiler.text.lexer.*;
+import com.squ1dd13.msd.compiler.text.lexer.Token.*;
+import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
-
-import static com.squ1dd13.msd.compiler.text.Lexer.*;
+import java.util.stream.*;
 
 public class NewParser {
     public NewParser(List<Token> tokens) {
@@ -27,7 +28,7 @@ public class NewParser {
             patternTokens = Arrays.asList(tokens);
         }
 
-        private boolean tokenMatches(Token patternToken, Token actualToken) {
+        public static boolean tokenMatches(Token patternToken, Token actualToken) {
             if(patternToken == null) return true;
 
             if(patternToken.hasText && actualToken.hasText) {
@@ -42,7 +43,7 @@ public class NewParser {
                 return patternToken.getInteger() == actualToken.getInteger();
             }
 
-            return false;
+            return patternToken.type == actualToken.type;
         }
 
         public List<Match> matchesInList(List<Token> tokens) {
@@ -54,7 +55,7 @@ public class NewParser {
                     if(!tokenMatches(patternTokens.get(j), tokens.get(i + j))) break;
                 }
 
-                if(j == tokens.size()) {
+                if(j == patternTokens.size()) {
                     matches.add(new Match(tokens.subList(i, j)));
                 }
             }
@@ -69,6 +70,52 @@ public class NewParser {
         "if_", // TODO: Make 'if' command illegal once conditionals work.
         "while"
     );
+
+    public static List<List<Token>> splitTokens(List<Token> tokens, TokenType delim) {
+        List<List<Token>> tokenLists = new ArrayList<>();
+
+        List<Token> currentList = new ArrayList<>();
+        for(Token tkn : tokens) {
+            if(tkn.is(delim)) {
+                tokenLists.add(new ArrayList<>(currentList));
+                currentList.clear();
+            } else {
+                currentList.add(tkn);
+            }
+        }
+
+        if(currentList.isEmpty()) {
+            return tokenLists;
+        }
+
+        tokenLists.add(currentList);
+
+        return tokenLists;
+    }
+
+    public static List<List<Token>> splitTokens(List<Token> tokens, Token delim) {
+        List<List<Token>> tokenLists = new ArrayList<>();
+
+        List<Token> currentList = new ArrayList<>();
+        for(Token tkn : tokens) {
+            if(TokenPattern.tokenMatches(delim, tkn)) {
+                tokenLists.add(new ArrayList<>(currentList));
+                currentList.clear();
+            } else {
+                currentList.add(tkn);
+            }
+        }
+
+        if(currentList.isEmpty()) {
+            return tokenLists;
+        }
+
+        tokenLists.add(currentList);
+
+        return tokenLists;
+    }
+
+//    public static List<List<Token>>
 
     private List<Token> tokenList;
     private int index;
@@ -89,6 +136,12 @@ public class NewParser {
         return null;
     }
 
+    public static List<Token> filterBlankTokens(Collection<Token> tokens) {
+        return tokens.stream().filter(
+            t -> t.isNot(TokenType.Whitespace) && t.isNot(TokenType.Newline)
+        ).collect(Collectors.toList());
+    }
+
     private Token readNext() {
         return tokenList.get(index++);
     }
@@ -107,7 +160,7 @@ public class NewParser {
         skip(TokenType.Whitespace, TokenType.Newline);
     }
 
-    public List<Token> readCommand() {
+    public ParsedCommand readCommand() {
         Token nameToken = readNotBlank();
         System.out.println("command: " + nameToken.getText());
 
@@ -119,36 +172,76 @@ public class NewParser {
 
         List<Token> argTokens = new ArrayList<>();
         while(peekNotBlank().isNot(TokenType.CloseBracket)) {
-            Token next = readNotBlank();
-            System.out.println("arg: " + next);
-
-            argTokens.add(next);
+            argTokens.add(readNotBlank());
         }
 
-        System.out.println("end");
-        Token endBracket = readNotBlank();
+        ParsedCommand command = new ParsedCommand();
+        command.nameToken = nameToken;
 
-        List<Token> commandTokens = new ArrayList<>(List.of(nameToken, firstBracket));
-        commandTokens.addAll(argTokens);
-        commandTokens.add(endBracket);
+        List<List<Token>> argumentLists = splitTokens(argTokens, TokenType.Comma);
+        for(var argList : argumentLists) {
+            if(argList.size() != 1) {
+                Util.emitFatalError("Invalid argument in call to '" + nameToken.getText() + "'");
+            }
 
-        return commandTokens;
+            command.argumentTokens.add(argList.get(0));
+        }
+
+        readNext();
+
+        return command;
+    }
+
+    public ParsedConditional parseIf() {
+        return new ParsedConditional(tokenList);
     }
 
     public List<Compilable> parseTokens() {
-        for(index = 0; index < tokenList.size(); ++index) {
-            Token token = tokenList.get(index);
+        List<Token> cleanTokens = filterBlankTokens(tokenList);
 
-            if(token.type == TokenType.IdentifierOrKeyword) {
-                String text = token.getText();
+        List<ParsedConditional> removedConditionals = new ArrayList<>();
 
-                if(!keywords.contains(text)) {
-                    // Command name (hopefully).
+        List<Token> pureStatements = new ArrayList<>();
+        tokenList = cleanTokens;
+        for(index = 0; index < cleanTokens.size(); ++index) {
+            if(peek().getText().equals("if")) {
+                int conditionalIndex = removedConditionals.size();
+                removedConditionals.add(parseIf());
 
-                }
+                pureStatements.add(
+                    Token.withType(TokenType.None).withInt(conditionalIndex)
+                );
+
+                pureStatements.add(Token.withType(TokenType.Semicolon));
+                index += removedConditionals.get(conditionalIndex).tokenLength;
+            } else {
+                pureStatements.add(peek());
             }
         }
 
-        return null;
+        cleanTokens = pureStatements;
+
+        index = 0;
+        List<List<Token>> statements = splitTokens(cleanTokens, TokenType.Semicolon);
+
+        List<Compilable> elements = new ArrayList<>();
+        for(List<Token> statement : statements) {
+            tokenList = statement;
+            index = 0;
+
+            System.out.println(statement.get(0).type);
+
+            if(statement.get(0).type == TokenType.None) {
+                elements.add(removedConditionals.get(statement.get(0).getInteger()).toCompilable());
+                continue;
+            }
+
+            ParsedCommand command = readCommand();
+            System.out.println(command.nameToken);
+
+            elements.add(command.toCompilable());
+        }
+
+        return elements;
     }
 }
