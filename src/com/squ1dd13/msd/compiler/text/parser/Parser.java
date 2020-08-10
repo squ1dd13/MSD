@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.compiler.text;
+package com.squ1dd13.msd.compiler.text.parser;
 
 import com.squ1dd13.msd.compiler.constructs.*;
 import com.squ1dd13.msd.compiler.text.lexer.*;
@@ -8,68 +8,30 @@ import com.squ1dd13.msd.shared.*;
 import java.util.*;
 import java.util.stream.*;
 
-public class NewParser {
-    public NewParser(List<Token> tokens) {
+public class Parser {
+    public Parser(List<Token> tokens) {
         tokenList = tokens;
     }
 
-    public static class TokenPattern {
-        public static class Match {
-            public List<Token> matchedTokens = new ArrayList<>();
+    public static boolean tokenMatches(Token patternToken, Token actualToken) {
+        if(patternToken == null) return true;
 
-            public Match(List<Token> matched) {
-                matchedTokens = matched;
-            }
+        if(patternToken.hasText && actualToken.hasText) {
+            return patternToken.getText().equals(actualToken.getText());
         }
 
-        private final List<Token> patternTokens;
-
-        public TokenPattern(Token ...tokens) {
-            patternTokens = Arrays.asList(tokens);
+        if(patternToken.hasFloat && actualToken.hasFloat) {
+            return patternToken.getFloat() == actualToken.getFloat();
         }
 
-        public static boolean tokenMatches(Token patternToken, Token actualToken) {
-            if(patternToken == null) return true;
-
-            if(patternToken.hasText && actualToken.hasText) {
-                return patternToken.getText().equals(actualToken.getText());
-            }
-
-            if(patternToken.hasFloat && actualToken.hasFloat) {
-                return patternToken.getFloat() == actualToken.getFloat();
-            }
-
-            if(patternToken.hasInt && actualToken.hasInt) {
-                return patternToken.getInteger() == actualToken.getInteger();
-            }
-
-            return patternToken.type == actualToken.type;
+        if(patternToken.hasInt && actualToken.hasInt) {
+            return patternToken.getInteger() == actualToken.getInteger();
         }
 
-        public List<Match> matchesInList(List<Token> tokens) {
-            List<Match> matches = new ArrayList<>();
-
-            for(int i = 0; i < tokens.size(); ++i) {
-                int j = 0;
-                for(; j < patternTokens.size() && (i + j) < tokens.size(); ++j) {
-                    if(!tokenMatches(patternTokens.get(j), tokens.get(i + j))) break;
-                }
-
-                if(j == patternTokens.size()) {
-                    matches.add(new Match(tokens.subList(i, j)));
-                }
-            }
-
-            return matches;
-        }
+        return patternToken.type == actualToken.type;
     }
 
-    private static Set<String> keywords = Set.of(
-        "and",
-        "or",
-        "if_", // TODO: Make 'if' command illegal once conditionals work.
-        "while"
-    );
+    // TODO: Make 'if' command illegal once conditionals work.
 
     public static List<List<Token>> splitTokens(List<Token> tokens, TokenType delim) {
         List<List<Token>> tokenLists = new ArrayList<>();
@@ -98,7 +60,7 @@ public class NewParser {
 
         List<Token> currentList = new ArrayList<>();
         for(Token tkn : tokens) {
-            if(TokenPattern.tokenMatches(delim, tkn)) {
+            if(tokenMatches(delim, tkn)) {
                 tokenLists.add(new ArrayList<>(currentList));
                 currentList.clear();
             } else {
@@ -151,7 +113,7 @@ public class NewParser {
         return readNext();
     }
 
-    private void skip(TokenType ...skipTypes) {
+    private void skip(TokenType... skipTypes) {
         List<TokenType> skipping = Arrays.asList(skipTypes);
         while(skipping.contains(peek().type)) index++;
     }
@@ -171,7 +133,8 @@ public class NewParser {
         }
 
         List<Token> argTokens = new ArrayList<>();
-        while(peekNotBlank().isNot(TokenType.CloseBracket)) {
+
+        while(peekNotBlank() != null && peekNotBlank().isNot(TokenType.CloseBracket)) {
             argTokens.add(readNotBlank());
         }
 
@@ -204,7 +167,7 @@ public class NewParser {
         List<Token> pureStatements = new ArrayList<>();
         tokenList = cleanTokens;
         for(index = 0; index < cleanTokens.size(); ++index) {
-            if(peek().getText().equals("if")) {
+            if(false && peek().getText().equals("if")) {
                 int conditionalIndex = removedConditionals.size();
                 removedConditionals.add(parseIf());
 

@@ -1,6 +1,5 @@
 package com.squ1dd13.msd.compiler.text.lexer;
 
-import com.squ1dd13.msd.compiler.text.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;

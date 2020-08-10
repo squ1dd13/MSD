@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.compiler.text;
+package com.squ1dd13.msd.compiler.text.parser;
 
 import com.squ1dd13.msd.compiler.constructs.*;
 import com.squ1dd13.msd.compiler.constructs.language.*;
@@ -13,7 +13,7 @@ public class ParsedConditional implements CanBeCompilable {
     public int tokenLength;
 
     public ParsedConditional(List<Token> unfiltered) {
-        List<Token> tokens = NewParser.filterBlankTokens(unfiltered);
+        List<Token> tokens = Parser.filterBlankTokens(unfiltered);
 
         ifToken = tokens.get(0);
 
@@ -81,7 +81,7 @@ public class ParsedConditional implements CanBeCompilable {
             }
         }
 
-        var conditionTokenLists = NewParser.splitTokens(
+        var conditionTokenLists = Parser.splitTokens(
             conditionTokens,
             Token
                 .withType(Token.TokenType.IdentifierOrKeyword)
@@ -93,11 +93,11 @@ public class ParsedConditional implements CanBeCompilable {
             tokenList.add(Token.withType(Token.TokenType.Semicolon));
 
             conditional.conditions.add(
-                (LowLevelCommand)new NewParser(tokenList).readCommand().toCompilable()
+                (BasicCommand)new Parser(tokenList).readCommand().toCompilable()
             );
         }
 
-        conditional.mainBodyElements = new NewParser(bodyTokens).parseTokens();
+        conditional.mainBodyElements = new Parser(bodyTokens).parseTokens();
 
         return conditional;
     }

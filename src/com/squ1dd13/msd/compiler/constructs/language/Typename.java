@@ -2,6 +2,7 @@ package com.squ1dd13.msd.compiler.constructs.language;
 
 import com.squ1dd13.msd.shared.*;
 
+// Should be used for typename lookups when MSD code is high-level enough for that.
 public class Typename {
     public static String get(HighLevelType type) {
         switch(type) {

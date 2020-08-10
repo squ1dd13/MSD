@@ -8,7 +8,7 @@ import java.util.stream.*;
 
 public class Conditional implements Compilable {
     public boolean isAnd = false;
-    public List<LowLevelCommand> conditions;
+    public List<BasicCommand> conditions;
     public List<Compilable> mainBodyElements;
     public List<Compilable> elseBodyElements;
 
@@ -28,45 +28,45 @@ public class Conditional implements Compilable {
         return numConditions - 19;
     }
 
-    private List<LowLevelCommand> getMainBodyCommands(Context ctx) {
+    private List<BasicCommand> getMainBodyCommands() {
         return mainBodyElements.stream().map(
-            compilable -> compilable.toCommands(ctx)
+            Compilable::toCommands
         ).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
-    private List<LowLevelCommand> getElseBodyCommands(Context ctx) {
+    private List<BasicCommand> getElseBodyCommands() {
         if(elseBodyElements == null) return new ArrayList<>();
 
         return elseBodyElements.stream().map(
-            compilable -> compilable.toCommands(ctx)
+            Compilable::toCommands
         ).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
-        return "Conditional: " + toCommands(new Context());
+        return "Conditional: " + toCommands();
     }
 
-    @Override
-    public Collection<Integer> compile(Context context) {
-        return new ArrayList<>();
-    }
+//    @Override
+//    public Collection<Integer> compile(Context context) {
+//        return new ArrayList<>();
+//    }
 
     @Override
-    public Collection<LowLevelCommand> toCommands(Context ctx) {
+    public Collection<BasicCommand> toCommands() {
         // Create an 'if' command.
         int argumentValue = conditionEncoding();
 
-        LowLevelCommand command = new LowLevelCommand();
-        command.command = Command.commands.get(Opcode.If.get()).copy();
+        BasicCommand command = new BasicCommand();
+        command.highLevel = Command.commands.get(Opcode.If.get()).copy();
         command.arguments = List.of(new Argument(LowLevelType.S8, argumentValue));
 
-        List<LowLevelCommand> commands = new ArrayList<>();
+        List<BasicCommand> commands = new ArrayList<>();
         commands.add(command);
         commands.addAll(conditions);
 
-        var mainBody = getMainBodyCommands(ctx);
-        var elseBody = getElseBodyCommands(ctx);
+        var mainBody = getMainBodyCommands();
+        var elseBody = getElseBodyCommands();
 
         // Add a relative jump. This is not a real thing in SCM,
         //  it just means we can add the jump without worrying
@@ -74,9 +74,9 @@ public class Conditional implements Compilable {
         //  offset will be added later.
 
         // We need to know the size of the main body before adding the jump.
-        int bodySize = mainBody.stream().mapToInt(c -> c.compile(ctx).size()).sum();
+        int bodySize = mainBody.stream().mapToInt(c -> c.compile().size()).sum();
 
-        LowLevelCommand bodyJump = LowLevelCommand.create(
+        BasicCommand bodyJump = BasicCommand.create(
             Opcode.RelativeConditionalJump.get(),
             "relative_jump_conditional",
             new Argument(LowLevelType.S32, bodySize)
@@ -86,9 +86,9 @@ public class Conditional implements Compilable {
         commands.addAll(mainBody);
 
         if(!elseBody.isEmpty()) {
-            int elseSize = elseBody.stream().mapToInt(c -> c.compile(ctx).size()).sum();
+            int elseSize = elseBody.stream().mapToInt(c -> c.compile().size()).sum();
 
-            LowLevelCommand elseJump = LowLevelCommand.create(
+            BasicCommand elseJump = BasicCommand.create(
                 Opcode.RelativeUnconditionalJump.get(),
                 "relative_jump",
                 new Argument(LowLevelType.S32, elseSize)

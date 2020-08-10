@@ -30,11 +30,9 @@ public enum LowLevelType {
     // Not a real type, so should never be written to a file.
     Unknown(0x14);
 
-    private final int num;
-
-    LowLevelType(int num) {
-        this.num = num;
-    }
+    // 'n' has no significance, but it allows the enum to act as a visual lookup
+    //  table when debugging (because the type encoding is written).
+    LowLevelType(int n) { }
 
     public static LowLevelType decode(int n) {
         return values()[n];
@@ -84,34 +82,12 @@ public enum LowLevelType {
     }
 
     public int[] toBytes(int value) {
-        // +1 for the identifier byte.
-//        int[] bytes = new int[valueLength() + 1];
-//        bytes[0] = num;
-
-        int[] valueBytes = Util.intToBytesLE(value);
-//        System.arraycopy(valueBytes, 0, bytes, 1, bytes.length - 1);
-//
-//        return bytes;
-        return valueBytes;
+        return Util.intToBytesLE(value);
     }
 
     public int[] toBytes(float value) {
-//        int[] bytes = new int[valueLength() + 1];
-//        bytes[0] = num;
-
-        int[] valueBytes = Util.floatToBytesLE(value);
-
-//        for(int i = 1; i < bytes.length; ++i) {
-//            bytes[i] = valueBytes[i - 1];
-//        }
-
-//        System.arraycopy(valueBytes, 0, bytes, 1, bytes.length - 1);
-
-        return valueBytes;
+        return Util.floatToBytesLE(value);
     }
-
-//    A4 03 09 54 52 41 49 4E 53 00 00 05 00 02 D4 94 06
-//    A4       54 52 41 49 4E 53 00 00 05    02 D4 94 06
 
     public int[] toBytes(String value) {
         if(this == StringVar) {

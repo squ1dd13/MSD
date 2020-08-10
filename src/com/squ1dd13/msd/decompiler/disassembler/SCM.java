@@ -1,6 +1,6 @@
 package com.squ1dd13.msd.decompiler.disassembler;
 
-import com.squ1dd13.msd.decompiler.low.*;
+import com.squ1dd13.msd.decompiler.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
@@ -20,14 +20,14 @@ public class SCM {
             command.offset = i;
             if(command.opcode == Integer.MAX_VALUE) break;
             commands.add(command);
-            CommandRegistry.getCommand(command.opcode).addReversed(command);
+            CommandRegistry.get(command.opcode).addReversed(command);
 
             i += command.length;
         }
     }
 
-    public LowScript toScript() {
-        LowScript script = new LowScript();
+    public DecompiledScript toScript() {
+        DecompiledScript script = new DecompiledScript();
 
         for(int i = 0; i < commands.size(); i++) {
             ReversedCommand command = commands.get(i);

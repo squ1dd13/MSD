@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.compiler.text;
+package com.squ1dd13.msd.compiler.text.parser;
 
 import com.squ1dd13.msd.compiler.constructs.*;
 

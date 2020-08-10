@@ -6,10 +6,10 @@ import com.squ1dd13.msd.shared.*;
 import java.util.*;
 
 public class Argument {
-    public LowLevelType type = LowLevelType.Unknown;
+    public LowLevelType type;
 
-    public int intValue = 0;
-    public float floatValue = 0;
+    public int intValue;
+    public float floatValue;
     public String stringValue = "";
 
     public Argument(LowLevelType type, int intValue) {
@@ -53,7 +53,7 @@ public class Argument {
         return "<?>";
     }
 
-    public Collection<Integer> compile(Context context) {
+    public Collection<Integer> compile() {
         HighLevelType hlt = type.highLevelType();
 
         int[] bytes = null;

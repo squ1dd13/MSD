@@ -1,7 +1,7 @@
 package com.squ1dd13.msd.decompiler.high;
 
+import com.squ1dd13.msd.decompiler.*;
 import com.squ1dd13.msd.decompiler.high.blocks.*;
-import com.squ1dd13.msd.decompiler.low.*;
 import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.shared.*;
 
@@ -11,8 +11,8 @@ import java.util.*;
 public class HighLevelScript {
     public GenericCodeBlock commandBlock = new GenericCodeBlock();
 
-    public HighLevelScript(LowScript lowScript) {
-        List<Command> commands = lowScript.commands;//compactJumps(lowScript.commands);
+    public HighLevelScript(DecompiledScript decompiledScript) {
+        List<Command> commands = decompiledScript.commands;//compactJumps(lowScript.commands);
         findVariables(commands);
         BlockFactory.calledAddresses = calledOffsets(commands);
 

@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.compiler.text;
+package com.squ1dd13.msd.compiler.text.lexer;
 
 import java.io.*;
 import java.util.*;

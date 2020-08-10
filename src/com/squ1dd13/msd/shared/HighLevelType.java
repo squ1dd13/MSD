@@ -54,38 +54,6 @@ public enum HighLevelType {
         return isGlobal() || isLocal();
     }
 
-    public LowLevelType guessLowLevelType() {
-        switch(this) {
-            case End:
-            case Unknown:
-                return LowLevelType.Unknown;
-            case Int:
-                return LowLevelType.S16;
-            case Flt:
-                return LowLevelType.F32;
-            case Str:
-                return LowLevelType.StringVar;
-            case GlobalIntFloat:
-                return LowLevelType.GlobalIntFloat;
-            case LocalIntFloat:
-                return LowLevelType.LocalIntFloat;
-            case GlobalIntFloatArr:
-                return LowLevelType.GlobalIntFloatArr;
-            case LocalIntFloatArr:
-                return LowLevelType.LocalIntFloatArr;
-            case GlobalStr:
-                return LowLevelType.GlobalString16;
-            case LocalStr:
-                return LowLevelType.LocalString16;
-            case GlobalStrArr:
-                return LowLevelType.GlobalString16Arr;
-            case LocalStrArr:
-                return LowLevelType.LocalString16Arr;
-        }
-
-        return LowLevelType.Unknown;
-    }
-
     public static HighLevelType typeForString(String s) {
         char c = s.charAt(0);
 

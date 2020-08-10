@@ -87,7 +87,7 @@ public class Command {
     }
 
     public ParamInfo getParamInfo(int paramIndex) {
-        var paramType = CommandRegistry.getCommand(opcode).parameterTypes.get(paramIndex);
+        var paramType = CommandRegistry.get(opcode).parameterTypes.get(paramIndex);
 
         return new ParamInfo(
             paramType.getHighLevel(),

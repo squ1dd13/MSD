@@ -104,6 +104,7 @@ public class CommandRegistry implements Serializable {
     }
 
     private final Map<Integer, CommandEntry> commandEntries = new HashMap<>();
+    private final Map<String, Integer> commandNames = new HashMap<>();
 
     private static CommandRegistry shared = null;
 
@@ -131,16 +132,17 @@ public class CommandRegistry implements Serializable {
         stream.close();
     }
 
-    public static CommandEntry getCommand(int opcode) {
+    public static CommandEntry get(int opcode) {
         return shared.commandEntries.getOrDefault(opcode, null);
     }
 
-    public static CommandEntry getCommand(Command command) {
-        CommandEntry entry = getCommand(command.opcode);
+    public static CommandEntry get(Command command) {
+        CommandEntry entry = get(command.opcode);
 
         if(entry == null) {
             entry = new CommandEntry(command);
             shared.commandEntries.put(command.opcode, entry);
+            shared.commandNames.put(entry.name, command.opcode);
         }
 
         return entry;
@@ -149,6 +151,23 @@ public class CommandRegistry implements Serializable {
     public static CommandEntry addCommand(Command command) {
         var entry = new CommandEntry(command);
         shared.commandEntries.put(command.opcode, entry);
+        shared.commandNames.put(entry.name, command.opcode);
         return entry;
+    }
+
+    public static boolean contains(int opcode) {
+        return shared.commandEntries.containsKey(opcode);
+    }
+
+    public static boolean contains(String name) {
+        return shared.commandNames.containsKey(name);
+    }
+
+    public static int opcodeForName(String name) {
+        return shared.commandNames.getOrDefault(name, -1);
+    }
+
+    public static CommandEntry get(String name) {
+        return get(opcodeForName(name));
     }
 }

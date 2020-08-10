@@ -1,17 +1,15 @@
 package com.squ1dd13.msd;
 
-import com.squ1dd13.msd.compiler.assembly.*;
-import com.squ1dd13.msd.compiler.constructs.*;
-import com.squ1dd13.msd.compiler.text.*;
+import com.squ1dd13.msd.compiler.*;
 import com.squ1dd13.msd.compiler.text.lexer.*;
+import com.squ1dd13.msd.compiler.text.parser.*;
+import com.squ1dd13.msd.decompiler.*;
 import com.squ1dd13.msd.decompiler.disassembler.*;
 import com.squ1dd13.msd.decompiler.high.*;
-import com.squ1dd13.msd.decompiler.low.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.*;
 
 public class Main {
     public static void compile(String inPath, String outPath) throws IOException {
@@ -25,10 +23,10 @@ public class Main {
             }
         }
 
-        Parser parser = new Parser();
+//        Parser parser = new Parser();
 
         CompiledScript script = new CompiledScript();
-        script.elements = new NewParser(Lexer.lex(builder.toString())).parseTokens();
+        script.elements = new Parser(Lexer.lex(builder.toString())).parseTokens();
         script.compileAndWrite(outPath);
     }
 
@@ -47,11 +45,11 @@ public class Main {
         }
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
-        CommandInfoDesk.loadCommandNames();
-        CommandInfoDesk.loadFile("/Users/squ1dd13/Documents/MSD-Project/llp.txt");
+//        CommandInfoDesk.loadCommandNames();
+//        CommandInfoDesk.loadFile("/Users/squ1dd13/Documents/MSD-Project/llp.txt");
 
         SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
-        LowScript script = scm.toScript();
+        DecompiledScript script = scm.toScript();
 
 //        final String s = "if(?is_char_in_model(globalInt_12, 570)) {\n" +
 //            "    goto(-123);\n" +
@@ -75,7 +73,7 @@ public class Main {
         highLevelScript.print();
 //
         compile(
-            "/Users/squ1dd13/Documents/MSD-Project/script.msd",
+            "/Users/squ1dd13/Documents/MSD-Project/script_.msd.txt",
             "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
         );
 //
