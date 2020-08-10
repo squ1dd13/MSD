@@ -1,5 +1,7 @@
 package com.squ1dd13.msd.decompiler.high;
 
+import static com.squ1dd13.msd.decompiler.high.SyntaxHighlight.TextColor.*;
+
 public class SyntaxHighlight {
     private static class RGBColor {
         int r, g, b;
@@ -15,30 +17,45 @@ public class SyntaxHighlight {
         }
     };
 
-    static String white = new RGBColor(255, 255, 255).colorString();
-    static String green = new RGBColor(100, 255, 100).colorString();
-    static String blue = new RGBColor(100, 100, 255).colorString();
-    static String red = new RGBColor(255, 100, 100).colorString();
-    static String codeColor = new RGBColor(200, 255, 255).colorString();
-    static String gray = new RGBColor(100, 100, 100).colorString();
-    static String varColor =  new RGBColor(255, 200, 200).colorString();
-    static String pink = new RGBColor(255, 150, 200).colorString();
-    static String orange = new RGBColor(255, 150, 0).colorString();
-    static String blueGreen = new RGBColor(0, 220, 200).colorString();
-    static String callColor = new RGBColor(255, 255, 100).colorString();
-    static String stringColor = new RGBColor(50, 200, 255).colorString();
+    public enum TextColor {
+        White(255, 255, 255),
+        Green(100, 255, 100),
+        Blue(100, 100, 255),
+        Red(255, 100, 100),
+        LightBlue(200, 255, 255),
+        Gray(100, 100, 100),
+        LightPink(255, 200, 200),
+        Pink(255, 150, 200),
+        Orange(255, 150, 0),
+        BlueGreen(0, 220, 200),
+        LightYellow(255, 255, 100),
+        MidBlue(50, 200, 255);
+
+        private final RGBColor color;
+        TextColor(int r, int g, int b) {
+            color = new RGBColor(r, g, b);
+        }
+
+        public String highlight(String s) {
+            return toString() + s + LightBlue.toString();
+        }
+
+        @Override
+        public String toString() {
+            return color.colorString();
+        }
+    }
 
     public static String highlightLine(String line) {
-        line = line.replaceAll("(?<=(?:if\\()|(?:while\\()|(?:and)|(?:or))(\\s*\\?[^(]+)", callColor + "$1" + codeColor);
-        line = line.replaceAll("if\\(([^)]+)\\)", pink + "if" + codeColor + "($1)");
-        line = line.replaceAll("while\\(([^)]+)\\)", pink + "while" + codeColor + "($1)");
-        line = line.replaceAll("([^:]+):", blueGreen + "$1" + codeColor + ":");
-        line = line.replaceAll("(&?local[^_]+_\\d+)", orange + "$1" + codeColor);
-        line = line.replaceAll("(&?global[^_]+_\\d+)", red + "$1" + codeColor);
-        line = line.replaceAll("(?<=(?:\\()|(?:, ))(-?[\\d.]+f?)", green + "$1" + codeColor);
-        line = line.replaceAll("([^(]+)\\(", varColor + "$1" + codeColor + "(");
-        line = line.replaceAll("'(\\.|[^'])*'", stringColor + "$0" + codeColor);
-
-        return line;
+        return line
+            .replaceAll("(?<=(?:if\\()|(?:while\\()|(?:and)|(?:or))(\\s*\\?[^(]+)", LightYellow.highlight("$1"))
+            .replaceAll("if\\(([^)]+)\\)", Pink.highlight("if") + "($1)")
+            .replaceAll("while\\(([^)]+)\\)", Pink.highlight("while") + "($1)")
+            .replaceAll("([^:]+):", BlueGreen.highlight("$1") + ":")
+            .replaceAll("(&?local[^_]+_\\d+)", Orange.highlight("$1"))
+            .replaceAll("(&?global[^_]+_\\d+)", Red.highlight("$1"))
+            .replaceAll("(?<=(?:\\()|(?:, ))(-?[\\d.]+f?)", Green.highlight("$1"))
+            .replaceAll("([^(]+)\\(", LightPink.highlight("$1") + "(")
+            .replaceAll("'(\\.|[^'])*'", MidBlue.highlight("$0"));
     }
 }

@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.stream.*;
 
 // Shared information about commands.
+// TODO: Make CommandRegistry fully static.
 public class CommandRegistry implements Serializable {
     public static class CommandEntry implements Serializable {
         public static class ParameterType implements Serializable {
