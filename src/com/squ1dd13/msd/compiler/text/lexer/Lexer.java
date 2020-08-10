@@ -14,7 +14,7 @@ public class Lexer {
 
         int c;
         while((c = reader.read()) != -1) {
-            if(c == '\'' && !escapeNext) {
+            if(c == '"' && !escapeNext) {
                 break;
             }
 
@@ -82,6 +82,9 @@ public class Lexer {
         }
 
         char next = (char)nextInt;
+//        if(!Character.isISOControl(next)) return null;
+
+        if(nextInt > 10000) return null;
 
         // A preprocessor should be used to change all newlines to '\n'.
         switch(next) {
@@ -97,6 +100,9 @@ public class Lexer {
             case ',':
                 return Token.withType(Token.TokenType.Comma);
 
+            case '=':
+                return Token.withType(Token.TokenType.Equals);
+
             case ';':
                 return Token.withType(Token.TokenType.Semicolon);
 
@@ -106,7 +112,7 @@ public class Lexer {
             case '}':
                 return Token.withType(Token.TokenType.CloseBrace);
 
-            case '\'': {
+            case '"': {
                 // String literal
                 return readStringLiteral(reader);
             }
@@ -116,8 +122,13 @@ public class Lexer {
             return Token.withType(Token.TokenType.Whitespace);
         }
 
-        if(Character.isDigit(next) || ".-".contains(String.valueOf(next))) {
+        if(Character.isDigit(next) || ".".contains(String.valueOf(next))) {
             return readNumber(next, reader);
+        }
+
+        final Set<String> operators = Set.of("-", "+", "/", "*", "^");
+        if(operators.contains(String.valueOf(next))) {
+            return Token.withType(Token.TokenType.Operator).withText(String.valueOf(next));
         }
 
         StringBuilder identifierBuilder = new StringBuilder();
@@ -135,16 +146,21 @@ public class Lexer {
         return Token.withType(Token.TokenType.IdentifierOrKeyword).withText(identifierBuilder.toString());
     }
 
-    public static List<Token> lex(String str) throws IOException {
-        List<Token> tokens = new ArrayList<>();
+    public static List<Token> lex(String str) {
+        try {
+            List<Token> tokens = new ArrayList<>();
 
-        CharacterReader reader = new CharacterReader(new StringReader(str));
+            CharacterReader reader = new CharacterReader(new StringReader(str));
 
-        Token t;
-        while((t = readNext(reader)) != null) {
-            tokens.add(t);
+            Token t;
+            while((t = readNext(reader)) != null) {
+                tokens.add(t);
+            }
+
+            return tokens;
+        } catch(Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-
-        return tokens;
     }
 }

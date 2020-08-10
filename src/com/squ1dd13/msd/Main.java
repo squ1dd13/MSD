@@ -20,6 +20,7 @@ public class Main {
             String ln;
 
             while((ln = reader.readLine()) != null) {
+                if(ln.strip().startsWith("//")) continue;
                 builder.append(ln);
             }
         }
@@ -60,12 +61,28 @@ public class Main {
         DecompiledScript script = scm.toScript();
 
         HighLevelScript highLevelScript = new HighLevelScript(script);
-        highLevelScript.print();
+//        highLevelScript.print();
 //
         compile(
             "/Users/squ1dd13/Documents/MSD-Project/script.msd",
             "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
         );
+
+        highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
+        highLevelScript.print();
+
+        String maths = "31 + 4 * 2 / ( 1 - 5 )";
+        var lexedMaths = Parser.filterBlankTokens(Lexer.lex(maths));
+        var tokens = ArithmeticConverter.infixToPostfix2(lexedMaths);
+
+        StringBuilder expressionBuilder = new StringBuilder();
+        for(Token t : tokens) {
+            expressionBuilder.append(t.hasText ? t.getText() : t.getInteger()).append(' ');
+        }
+
+        System.out.println(maths + "\nbecomes\n" + expressionBuilder);
+
+        System.out.println(ArithmeticConverter.solve(tokens));
 
         System.out.println("Saving registry...");
         CommandRegistry.save(registryPath);

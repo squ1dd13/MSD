@@ -17,6 +17,8 @@ public class Token {
         OpenBracket,
         CloseBracket,
         Comma,
+        Equals,
+        Operator,
         Semicolon,
         OpenBrace,
         CloseBrace,
@@ -46,12 +48,14 @@ public class Token {
     public String getText() {
         if(customText != null) return customText;
 
-        final String[] defaults = new String[]{
+        final String[] defaults = {
             " ",
             "\\n",
             "(",
             ")",
             ",",
+            "=",
+            "?",
             ";",
             "{",
             "}",
@@ -106,7 +110,7 @@ public class Token {
     @Override
     public String toString() {
         String valueString = customText == null
-            ? getFloat() == 0 ? Integer.toString(getInteger()) : Float.toString(getFloat())
+            ? customFloat == 0 ? Integer.toString(customInt) : Float.toString(customFloat)
             : "'" + customText + "'";
 
         return String.format(

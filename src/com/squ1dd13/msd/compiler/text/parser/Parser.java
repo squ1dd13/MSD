@@ -32,7 +32,7 @@ public class Parser {
         return patternToken.type == actualToken.type;
     }
 
-    // TODO: Make 'if' command illegal once conditionals work.
+    // TODO: Make 'if' command illegal.
 
     public static List<List<Token>> splitTokens(List<Token> tokens, TokenType delim) {
         List<List<Token>> tokenLists = new ArrayList<>();
@@ -180,6 +180,18 @@ public class Parser {
         return levelTokens;
     }
 
+    private static final List<IdentifierChanger> identifierChangers = new ArrayList<>();
+
+    private static Token preprocessIdentifier(Token t) {
+        Token currentValue = Token.withType(t.type).withText(t.getText());
+
+        for(IdentifierChanger idChanger : identifierChangers) {
+            currentValue = idChanger.modifyIdentifier(currentValue);
+        }
+
+        return currentValue;
+    }
+
     private static Conditional readConditional(Iterator<Token> iterator) {
         // The 'if' will have already been read, so we start with a bracket.
         Token openBracket = iterator.next();
@@ -218,7 +230,8 @@ public class Parser {
             if(token.is(TokenType.IdentifierOrKeyword) && token.getText().equals("if")) {
                 parsedObjects.add(readConditional(iterator));
             } else {
-                parsedObjects.add(readNextCommand(token, iterator));
+                var command = readNextCommand(token, iterator);
+                if(command != null) parsedObjects.add(command);
             }
         }
 
@@ -238,12 +251,30 @@ public class Parser {
         return statement;
     }
 
+    private static List<Token> preprocess(List<Token> tokens) {
+        for(int i = 0; i < tokens.size(); ++i) {
+            if(tokens.get(i).isNot(TokenType.IdentifierOrKeyword)) continue;
+            tokens.set(i, preprocessIdentifier(tokens.get(i)));
+        }
+
+        return tokens;
+    }
+
     private static BasicCommand readNextCommand(Token nameToken, Iterator<Token> iterator) {
         var statementTokens = readStatement(iterator);
 
-        var tkns = new ArrayList<>(List.of(nameToken));
-        tkns.addAll(statementTokens);
-        return parseSingleCommand(tkns);
+        var allTokens = new ArrayList<>(List.of(nameToken));
+        allTokens.addAll(statementTokens);
+
+        final Set<String> usingKeywords = Set.of("using", "global");
+        if(usingKeywords.contains(nameToken.getText())) {
+            identifierChangers.add(new UsingStatement(allTokens));
+
+            return null;
+        }
+
+        preprocess(allTokens);
+        return parseSingleCommand(allTokens);
     }
 
     private static Argument tokenToArgument(Token token, int i, LowLevelType realType) {
@@ -289,6 +320,12 @@ public class Parser {
     }
 
     public static BasicCommand parseSingleCommand(List<Token> tokens) {
+        for(int i = 0; i < tokens.size(); ++i) {
+            if(tokens.get(i).is(TokenType.IdentifierOrKeyword)) {
+                tokens.set(i, preprocessIdentifier(tokens.get(i)));
+            }
+        }
+
         var iterator = tokens.iterator();
 
         String name = iterator.next().getText();
@@ -312,31 +349,43 @@ public class Parser {
         for(int i = 0; i < separateArguments.size(); ++i) {
             List<Token> argumentTokens = filterBlankTokens(separateArguments.get(i));
 
-            if(argumentTokens.size() > 1) {
-                System.out.println("Multiple tokens found in argument.");
-            }
-
             LowLevelType argumentType = CommandRegistry.get(opcode).lowLevelParameters().get(i);
+
+            if(argumentTokens.size() > 1) {
+                // See if we can evaluate these tokens statically (for mathematical expressions).
+                // First, check if all the tokens are mathematical.
+                if(argumentTokens.stream().allMatch(token ->
+                    token.is(TokenType.Operator)
+                    || token.is(TokenType.FloatLiteral)
+                    || token.is(TokenType.IntLiteral))) {
+
+                    var postfixTokens = ArithmeticConverter.infixToPostfix2(argumentTokens);
+                    Optional<Double> result = ArithmeticConverter.solve(postfixTokens);
+
+                    if(result.isPresent()) {
+                        Token resultToken = new Token();
+                        if(argumentType == LowLevelType.F32) {
+                            float floatResult = (float)result.get().doubleValue();
+                            resultToken = Token.withType(TokenType.FloatLiteral).withFloat(floatResult);
+                        } else if(argumentType.highLevelType().isInteger()) {
+                            int intResult = (int)result.get().doubleValue();
+                            resultToken = Token.withType(TokenType.IntLiteral).withInt(intResult);
+                        } else {
+                            Util.emitFatalError("Cannot evaluate mathematical expression when parameter is non-numeric");
+                        }
+
+                        argumentTokens = new ArrayList<>(List.of(resultToken));
+                    }
+                } else {
+                    System.out.println("couldn't evaluate");
+                }
+            }
 
             var arg = tokenToArgument(argumentTokens.get(0), i, argumentType);
             command.arguments.add(arg);
         }
 
         return command;
-    }
-
-    public List<BasicCommand> parseCommandTokens() {
-        List<BasicCommand> commands = new ArrayList<>();
-
-        Iterator<Token> iterator = tokenList.iterator();
-        while(iterator.hasNext()) {
-            var statementTokens = readStatement(iterator);
-            if(statementTokens.isEmpty()) continue;
-
-            commands.add(parseSingleCommand(statementTokens));
-        }
-
-        return commands;
     }
 
     public List<Compilable> parseTokens() {
