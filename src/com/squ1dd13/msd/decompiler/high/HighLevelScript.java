@@ -24,21 +24,21 @@ public class HighLevelScript {
         }
     }
 
-    private void findVariables(List<Command> commands) {
+    private static void findVariables(List<Command> commands) {
         for(Command command : commands) {
             DataValue[] arguments = command.arguments;
 
             for(int i = 0; i < arguments.length; i++) {
                 DataValue dataValue = arguments[i];
                 if(dataValue.type.isGlobal() || dataValue.type.isLocal()) {
-//                    System.out.println(dataValue.type);
+
                     Variable.create(dataValue).registerUse(command, i);
                 }
             }
         }
     }
 
-    private Set<Integer> calledOffsets(List<Command> commands) {
+    private static Set<Integer> calledOffsets(List<Command> commands) {
         int call = 0x50;
 
         Set<Integer> offsets = new HashSet<>();
@@ -52,7 +52,7 @@ public class HighLevelScript {
     }
 
     // Preprocessing step. Turns a jump from A->B->C into a jump from A->C as long as B is unconditional.
-    private List<Command> compactJumps(List<Command> commands) {
+    private static List<Command> compactJumps(List<Command> commands) {
         Map<Integer, Command> commandsByOffset = new HashMap<>();
         commands.forEach(c -> commandsByOffset.put(c.offset, c));
 
@@ -95,7 +95,6 @@ public class HighLevelScript {
             if(commandA.isGoto() && !jumpDestinations.contains(commandB.offset)) {
                 System.out.println("dead " + commandB.formattedString());
                 commands.set(i, null);
-//                commands.get(i).name = "dead" + commandB.name;
             }
         }
 

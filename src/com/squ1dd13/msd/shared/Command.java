@@ -63,7 +63,6 @@ public class Command {
                 int opcode = Integer.parseInt(opcodeHex, 16);
 
                 Command command = new Command(opcode, name);
-                command.parseParamTypes();
                 CommandRegistry.addCommand(command);
 
                 commands.put(opcode, command);
@@ -72,18 +71,6 @@ public class Command {
             System.out.println("Unable to load command definitions:");
             e.printStackTrace();
         }
-    }
-
-    private void parseParamTypes() {
-//        String paramList = name.substring(name.indexOf('(') + 1, name.length() - 1);
-//        if(paramList.isEmpty()) return;
-//
-//        String[] typeStrings = paramList.split(",");
-//
-//        paramInfo = new ParamInfo[typeStrings.length];
-//        for(int i = 0; i < typeStrings.length; ++i) {
-//            paramInfo[i] = ParamInfo.fromString(typeStrings[i]);
-//        }
     }
 
     public ParamInfo getParamInfo(int paramIndex) {
@@ -95,19 +82,6 @@ public class Command {
             false,
             paramType.getLowLevel()
         );
-    }
-
-    public void setParamInfo(int paramIndex, ParamInfo info) {
-//        if(paramInfo == null) {
-//            paramInfo = new ParamInfo[arguments.length];
-//        }
-//
-//        if(paramInfo.length <= paramIndex) {
-//            System.out.println("out of bounds write for sPI()");
-//            return;
-//        }
-//
-//        paramInfo[paramIndex] = info;
     }
 
     public String formattedString() {

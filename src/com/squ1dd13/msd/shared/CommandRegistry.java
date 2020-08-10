@@ -89,16 +89,12 @@ public class CommandRegistry implements Serializable {
                 ));
             }
 
-//            System.out.println("add " + Integer.toHexString(reversed.originalOpcode));
-//            compiledOpcode = Math.max(reversed.originalOpcode, compiledOpcode);
-
             if((reversed.originalOpcode & 0xF000) > (compiledOpcode & 0xF000)) {
                 compiledOpcode = reversed.originalOpcode;
             }
         }
 
         public int getOpcode() {
-//            System.out.println("return " + Integer.toHexString(compiledOpcode));
             return compiledOpcode < 0 ? opcode : compiledOpcode;
         }
     }

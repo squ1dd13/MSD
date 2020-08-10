@@ -74,7 +74,6 @@ public class ReversedCommand {
 
     public ReversedCommand(int[] bytes) {
         originalOpcode = opcode = bytes[0] | bytes[1] << 8;
-//        System.out.println("opcode = " + Integer.toHexString(originalOpcode));
 
         if(opcode == 0) {
             opcode = Integer.MAX_VALUE;

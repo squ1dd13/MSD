@@ -84,10 +84,8 @@ public class Argument {
         }
 
         if(bytes == null) {
-            System.err.println("Error: Unsupported type " + type + " cannot be compiled.");
-//            System.exit(1);
-//            return null;
-            bytes = new int[1];
+            Util.emitFatalError("Unsupported type " + type + " cannot be compiled.");
+            return new ArrayList<>();
         }
 
         // Convert to a list and add the type identifier.

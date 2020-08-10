@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.*;
 
 public class Conditional implements Compilable {
-    public boolean isAnd = false;
+    public boolean isAnd;
     public List<BasicCommand> conditions;
     public List<Compilable> mainBodyElements;
     public List<Compilable> elseBodyElements;
@@ -46,11 +46,6 @@ public class Conditional implements Compilable {
     public String toString() {
         return "Conditional: " + toCommands();
     }
-
-//    @Override
-//    public Collection<Integer> compile(Context context) {
-//        return new ArrayList<>();
-//    }
 
     @Override
     public Collection<BasicCommand> toCommands() {

@@ -23,8 +23,6 @@ public class Main {
             }
         }
 
-//        Parser parser = new Parser();
-
         CompiledScript script = new CompiledScript();
         script.elements = new Parser(Lexer.lex(builder.toString())).parseTokens();
         script.compileAndWrite(outPath);
@@ -45,44 +43,17 @@ public class Main {
         }
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
-//        CommandInfoDesk.loadCommandNames();
-//        CommandInfoDesk.loadFile("/Users/squ1dd13/Documents/MSD-Project/llp.txt");
 
         SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
         DecompiledScript script = scm.toScript();
 
-//        final String s = "if(?is_char_in_model(globalInt_12, 570)) {\n" +
-//            "    goto(-123);\n" +
-//            "}\n" +
-//            "goto(-123);";
-//
-//        var tokens = Lexer.lex(s);
-//        System.out.println(tokens);
-
-//        NewParser newParser = new NewParser(tokens);
-//        var intermediate = newParser.parseTokens();
-
-//        for(Compilable comp : intermediate) {
-//            System.out.println(comp.toString());
-//        }
-
-//        var p = newParser.parseIf();
-//        System.out.println(p);
-
         HighLevelScript highLevelScript = new HighLevelScript(script);
         highLevelScript.print();
-//
+
         compile(
             "/Users/squ1dd13/Documents/MSD-Project/script_.msd.txt",
             "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
         );
-//
-//        Stream<Path> paths = Files.list(Paths.get("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts"));
-//        paths.forEach(path -> {
-//            long length = path.toFile().length();
-//            System.out.println(path.getFileName().toString() + " = " + length + " bytes");
-//            System.out.println("that's " + ((float)length / 2048.f) + " * 2048");
-//        });
 
         System.out.println("Saving registry...");
         CommandRegistry.save(registryPath);

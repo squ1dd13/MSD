@@ -35,8 +35,6 @@ public class Variable {
     }
 
     public static Variable create(DataValue dataValue) {
-//        System.out.println(dataValue.type);
-
         int key = dataValueOffset(dataValue);
 
         if(variableMap.containsKey(key)) {

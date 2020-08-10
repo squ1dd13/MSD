@@ -77,8 +77,6 @@ public class Parser {
         return tokenLists;
     }
 
-//    public static List<List<Token>>
-
     private List<Token> tokenList;
     private int index;
 

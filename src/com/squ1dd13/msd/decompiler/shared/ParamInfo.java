@@ -72,9 +72,6 @@ public class ParamInfo {
                 base.isOutVal = true;
             } else {
                 base = fromStringInternal(s);
-//                if(base.absoluteType == DataType.Int && base.lowLevelType == LowLevelType.Unknown) {
-//                    base.lowLevelType = LowLevelType.S16;
-//                }
             }
 
             return base;

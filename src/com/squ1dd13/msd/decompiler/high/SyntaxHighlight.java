@@ -38,7 +38,6 @@ public class SyntaxHighlight {
         line = line.replaceAll("(?<=(?:\\()|(?:, ))(-?[\\d.]+f?)", green + "$1" + codeColor);
         line = line.replaceAll("([^(]+)\\(", varColor + "$1" + codeColor + "(");
         line = line.replaceAll("'(\\.|[^'])*'", stringColor + "$0" + codeColor);
-//        line = line.replaceAll("(?:and)|(?:or)", blue + "$0" + codeColor);
 
         return line;
     }

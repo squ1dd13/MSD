@@ -15,12 +15,11 @@ public class ConditionalBlock implements CodeBlock {
     public int consumed = 0;
 
     List<Command> conditions = new ArrayList<>();
-    Command falseJump = null;
+    Command falseJump;
     GenericCodeBlock body = new GenericCodeBlock();
-    boolean maybeIfElse = false, maybeWhile = false;
-    Command elseJump = null;
+    boolean maybeIfElse, maybeWhile;
+    Command elseJump;
     GenericCodeBlock elseBody = new GenericCodeBlock();
-//    Command trueJump = null;
 
     public ConditionalBlock(List<Command> commands, int index) {
         int originalIndex = index;
@@ -64,12 +63,6 @@ public class ConditionalBlock implements CodeBlock {
             index += output.consumed;
         }
 
-        if(body.commands.isEmpty()) {
-            System.out.println("Warning: Allowing empty if body");
-//            consumed = 0;
-//            return;
-        }
-
         try {
             SingleCommand single = (SingleCommand)body.commands.get(body.commands.size() - 1);
             if(single.command.isJump() && single.command.jumpDest() == testCommand.offset) {
@@ -109,10 +102,6 @@ public class ConditionalBlock implements CodeBlock {
     @Override
     public List<String> toLineStrings() {
         List<String> lines = new ArrayList<>();
-
-//        if(maybeWhile) {
-//            lines.add("// Maybe while loop?");
-//        }
 
         StringBuilder mainLineBuilder = new StringBuilder(maybeWhile ? "while(" : "if(");
 
