@@ -283,7 +283,7 @@ public class Parser {
         final String argumentErrorPrefix = "Argument " + (i + 1) + " for command";
         switch(token.type) {
             case FloatLiteral:
-                if(realType.highLevelType() == HighLevelType.Int) {
+                if(realType.highLevelType() == AbstractType.Int) {
                     Util.emitFatalError(
                         argumentErrorPrefix + " should be an integer value, but a float was passed"
                     );

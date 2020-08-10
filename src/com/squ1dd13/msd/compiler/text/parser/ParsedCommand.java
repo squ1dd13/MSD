@@ -2,7 +2,6 @@ package com.squ1dd13.msd.compiler.text.parser;
 
 import com.squ1dd13.msd.compiler.*;
 import com.squ1dd13.msd.compiler.language.*;
-import com.squ1dd13.msd.compiler.language.*;
 import com.squ1dd13.msd.compiler.text.lexer.*;
 import com.squ1dd13.msd.shared.*;
 
@@ -36,7 +35,7 @@ public class ParsedCommand implements CanBeCompilable {
             final String argumentErrorPrefix = "Argument " + (i + 1) + " for " + name;
             switch(token.type) {
                 case FloatLiteral:
-                    if(realType.highLevelType() == HighLevelType.Int) {
+                    if(realType.highLevelType() == AbstractType.Int) {
                         Util.emitFatalError(
                             argumentErrorPrefix + " should be an integer value, but a float was passed"
                         );

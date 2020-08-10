@@ -54,23 +54,23 @@ public class Argument {
     }
 
     public Collection<Integer> compile() {
-        HighLevelType hlt = type.highLevelType();
+        AbstractType hlt = type.highLevelType();
 
         int[] bytes = null;
 
-        if(hlt == HighLevelType.End) {
+        if(hlt == AbstractType.End) {
             if(intValue != 0) {
-                hlt = HighLevelType.Int;
+                hlt = AbstractType.Int;
                 type = LowLevelType.S16;
             } else if(!stringValue.isEmpty()) {
                 System.out.println("yeee");
-                hlt = HighLevelType.Str;
+                hlt = AbstractType.Str;
                 type = LowLevelType.String8;
             } else if(floatValue != 0) {
-                hlt = HighLevelType.Flt;
+                hlt = AbstractType.Flt;
                 type = LowLevelType.F32;
             } else {
-                hlt = HighLevelType.Int;
+                hlt = AbstractType.Int;
                 type = LowLevelType.S8;
             }
         }

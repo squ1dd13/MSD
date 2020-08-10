@@ -113,54 +113,54 @@ public enum LowLevelType {
         return bytes;
     }
 
-    public HighLevelType highLevelType() {
+    public AbstractType highLevelType() {
         switch(this) {
             case String8:
             case String16:
             case StringVar:
-                return HighLevelType.Str;
+                return AbstractType.Str;
 
             case End:
-                return HighLevelType.End;
+                return AbstractType.End;
 
             case GlobalIntFloat:
-                return HighLevelType.GlobalIntFloat;
+                return AbstractType.GlobalIntFloat;
 
             case LocalIntFloat:
-                return HighLevelType.LocalIntFloat;
+                return AbstractType.LocalIntFloat;
 
             case S8:
             case S16:
             case S32:
-                return HighLevelType.Int;
+                return AbstractType.Int;
 
             case F32:
-                return HighLevelType.Flt;
+                return AbstractType.Flt;
 
             case GlobalIntFloatArr:
-                return HighLevelType.GlobalIntFloatArr;
+                return AbstractType.GlobalIntFloatArr;
 
             case LocalIntFloatArr:
-                return HighLevelType.LocalIntFloatArr;
+                return AbstractType.LocalIntFloatArr;
 
             case GlobalString8:
             case GlobalString16:
-                return HighLevelType.GlobalStr;
+                return AbstractType.GlobalStr;
 
             case LocalString8:
             case LocalString16:
-                return HighLevelType.LocalStr;
+                return AbstractType.LocalStr;
 
             case GlobalString8Arr:
             case GlobalString16Arr:
-                return HighLevelType.GlobalStrArr;
+                return AbstractType.GlobalStrArr;
 
             case LocalString8Arr:
             case LocalString16Arr:
-                return HighLevelType.LocalStrArr;
+                return AbstractType.LocalStrArr;
 
             default:
-                return HighLevelType.Unknown;
+                return AbstractType.Unknown;
         }
     }
 }

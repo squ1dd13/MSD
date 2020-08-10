@@ -1,7 +1,7 @@
 package com.squ1dd13.msd.shared;
 
 // TODO: Combine high and low level type classes.
-public enum HighLevelType {
+public enum AbstractType {
     // There are fewer types here than in the disassembler because
     //  the disassembler needs to know all of the types. Here, we can use higher-level
     //  data types that abstract sizing details and such.
@@ -55,7 +55,7 @@ public enum HighLevelType {
         return isGlobal() || isLocal();
     }
 
-    public static HighLevelType typeForString(String s) {
+    public static AbstractType typeForString(String s) {
         char c = s.charAt(0);
 
         switch(c) {
@@ -106,7 +106,7 @@ public enum HighLevelType {
         }
     }
 
-    public HighLevelType getAbsolute() {
+    public AbstractType getAbsolute() {
         if(isFloat()) return Flt;
         if(isInteger()) return Int;
         if(isString()) return Str;

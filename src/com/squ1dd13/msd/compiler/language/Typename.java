@@ -4,7 +4,7 @@ import com.squ1dd13.msd.shared.*;
 
 // Should be used for typename lookups when MSD code is high-level enough for that.
 public class Typename {
-    public static String get(HighLevelType type) {
+    public static String get(AbstractType type) {
         switch(type) {
             case Int:
                 return "int";

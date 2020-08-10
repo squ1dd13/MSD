@@ -11,14 +11,14 @@ public class Variable {
     private static final Map<Integer, Variable> variableMap = new HashMap<>();
 
     public int offset;
-    public HighLevelType referenceType = HighLevelType.Unknown;
-    public HighLevelType valueType = HighLevelType.Unknown;
+    public AbstractType referenceType = AbstractType.Unknown;
+    public AbstractType valueType = AbstractType.Unknown;
 
     public void registerUse(Command cmd, int index) {
         ParamInfo info = cmd.getParamInfo(index);
         if(info == null) return;
 
-        if(valueType != referenceType && valueType != HighLevelType.Unknown && info.absoluteType != valueType) {
+        if(valueType != referenceType && valueType != AbstractType.Unknown && info.absoluteType != valueType) {
             System.out.println("Warning: Variable with ref type " + referenceType + " used as " + valueType + " and " + info.absoluteType);
             System.out.println("Newest use gets priority.");
         }

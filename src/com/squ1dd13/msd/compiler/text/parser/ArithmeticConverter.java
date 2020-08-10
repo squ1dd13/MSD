@@ -5,23 +5,39 @@ import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
 
+import static com.squ1dd13.msd.compiler.text.lexer.Token.*;
+
 // Converts mathematical expressions into lists of commands.
 public class ArithmeticConverter {
     public static List<Token> infixToPostfix2(List<Token> infix) {
-        if(infix.size() == 2 && infix.get(0).getText().equals("-")) {
-            Token numberToken = infix.get(1);
-            Token compactToken = Token.withType(infix.get(1).type);
-
-            return new ArrayList<>(List.of(
-                numberToken.hasFloat
-                ? compactToken.withFloat(-numberToken.getFloat())
-                : compactToken.withInt(-numberToken.getInteger())
-            ));
-        }
-
         final List<String> operators = List.of(
-            "-", "+", "/", "*", "^"
+            "-", "+", "/", "*", "^", "u+", "u-"
         );
+
+        final Set<String> mayBeUnary = Set.of("+", "-");
+
+        // Find and resolve unary operations.
+        for(int i = 0; i < infix.size(); ++i) {
+            Token token = infix.get(i);
+            if(token.isNot(TokenType.Operator)) continue;
+
+            boolean isUnary = false;
+
+            if(i == 0 && token.is(TokenType.Operator)) {
+                isUnary = true;
+            } else if(i != 0) {
+                var prev = infix.get(i - 1);
+                isUnary = prev.is(TokenType.Operator) || prev.is(TokenType.OpenBracket);
+            }
+
+            if(isUnary) {
+                if(!mayBeUnary.contains(token.getText())) {
+                    Util.emitFatalError("Operator '" + token.getText() + "' is not a unary operator");
+                }
+
+                infix.set(i, token.withText("u" + token.getText()));
+            }
+        }
 
         List<Token> postfixTokens = new ArrayList<>();
         Stack<Integer> symbolStack = new Stack<>();
@@ -37,7 +53,7 @@ public class ArithmeticConverter {
                         if(prec2 > prec1 || prec2 == prec1 /* and not right-associative */) {
                             String operator = operators.get(symbolStack.pop());
 
-                            Token operatorToken = Token.withType(Token.TokenType.Operator).withText(operator);
+                            Token operatorToken = withType(TokenType.Operator).withText(operator);
                             postfixTokens.add(operatorToken);
                         } else {
                             break;
@@ -46,13 +62,13 @@ public class ArithmeticConverter {
                 }
 
                 symbolStack.push(operatorIndex);
-            } else if(token.is(Token.TokenType.OpenBracket)) {
+            } else if(token.is(TokenType.OpenBracket)) {
                 symbolStack.push(-2);
-            } else if(token.is(Token.TokenType.CloseBracket)) {
+            } else if(token.is(TokenType.CloseBracket)) {
                 while(symbolStack.peek() != -2) {
                     String operator = operators.get(symbolStack.pop());
 
-                    Token operatorToken = Token.withType(Token.TokenType.Operator).withText(operator);
+                    Token operatorToken = withType(TokenType.Operator).withText(operator);
                     postfixTokens.add(operatorToken);
                 }
                 symbolStack.pop();
@@ -63,7 +79,7 @@ public class ArithmeticConverter {
         while(!symbolStack.isEmpty()) {
             String operator = operators.get(symbolStack.pop());
 
-            Token operatorToken = Token.withType(Token.TokenType.Operator).withText(operator);
+            Token operatorToken = withType(TokenType.Operator).withText(operator);
             postfixTokens.add(operatorToken);
         }
 
@@ -96,6 +112,14 @@ public class ArithmeticConverter {
                 result = a / b;
                 break;
 
+            case "u+":
+                result = a;
+                break;
+
+            case "u-":
+                result = -a;
+                break;
+
             default:
                 result = 0;
         }
@@ -120,14 +144,21 @@ public class ArithmeticConverter {
 
         try {
             for(Token token : postfixExpression) {
-                if(token.is(Token.TokenType.Operator)) {
+                if(token.is(TokenType.Operator)) {
+                    if(token.getText().startsWith("u")) {
+                        // Unary, so pass 0 as b.
+                        numberStack.push(performOperation(token, numberStack.pop(), 0));
+
+                        continue;
+                    }
+
                     // Apply the operator to the last two numbers.
                     double b = numberStack.pop();
                     double a = numberStack.pop();
 
                     numberStack.push(performOperation(token, a, b));
                 } else {
-                    if(token.is(Token.TokenType.IdentifierOrKeyword)) {
+                    if(token.is(TokenType.IdentifierOrKeyword)) {
                         return Optional.empty();
                     }
 
@@ -140,4 +171,6 @@ public class ArithmeticConverter {
 
         return Optional.of(numberStack.pop());
     }
+
+    // TODO: Convert any mathematical operations that can't be statically solved into commands.
 }

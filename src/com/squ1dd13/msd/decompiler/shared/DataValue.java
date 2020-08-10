@@ -4,7 +4,7 @@ import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.shared.*;
 
 public class DataValue {
-    public HighLevelType type = HighLevelType.Unknown;
+    public AbstractType type = AbstractType.Unknown;
     public String stringValue;
     public int intValue;
     public float floatValue;
@@ -17,17 +17,17 @@ public class DataValue {
             return;
         }
 
-        type = HighLevelType.typeForString(s);
+        type = AbstractType.typeForString(s);
 
-        if(type == HighLevelType.Str) {
+        if(type == AbstractType.Str) {
             stringValue = s;
-        } else if(type == HighLevelType.Int
-            || type == HighLevelType.GlobalIntFloat
-            || type == HighLevelType.GlobalStr
-            || type == HighLevelType.LocalIntFloat
-            || type == HighLevelType.LocalStr) {
+        } else if(type == AbstractType.Int
+            || type == AbstractType.GlobalIntFloat
+            || type == AbstractType.GlobalStr
+            || type == AbstractType.LocalIntFloat
+            || type == AbstractType.LocalStr) {
             intValue = Integer.parseInt(s.substring(1));
-        } else if(type == HighLevelType.Flt) {
+        } else if(type == AbstractType.Flt) {
             floatValue = Float.parseFloat(s.substring(1));
         }
     }

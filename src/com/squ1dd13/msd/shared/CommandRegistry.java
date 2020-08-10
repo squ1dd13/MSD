@@ -12,21 +12,21 @@ public class CommandRegistry implements Serializable {
     public static class CommandEntry implements Serializable {
         public static class ParameterType implements Serializable {
             public LowLevelType lowLevel;
-            public HighLevelType highLevel, absolute;
+            public AbstractType highLevel, absolute;
 
             public LowLevelType getLowLevel() {
                 return lowLevel;
             }
 
-            public HighLevelType getHighLevel() {
+            public AbstractType getHighLevel() {
                 return highLevel;
             }
 
-            public HighLevelType getAbsolute() {
+            public AbstractType getAbsolute() {
                 return absolute;
             }
 
-            public ParameterType(LowLevelType lowLevelType, HighLevelType absolute) {
+            public ParameterType(LowLevelType lowLevelType, AbstractType absolute) {
                 lowLevel = lowLevelType;
                 highLevel = lowLevelType.highLevelType();
                 this.absolute = lowLevelType.highLevelType();
@@ -59,11 +59,11 @@ public class CommandRegistry implements Serializable {
             return parameterTypes.stream().map(ParameterType::getLowLevel).collect(Collectors.toList());
         }
 
-        public List<HighLevelType> highLevelParameters() {
+        public List<AbstractType> highLevelParameters() {
             return parameterTypes.stream().map(ParameterType::getHighLevel).collect(Collectors.toList());
         }
 
-        public List<HighLevelType> absoluteParameterTypes() {
+        public List<AbstractType> absoluteParameterTypes() {
             return parameterTypes.stream().map(
                 ParameterType::getAbsolute
             ).collect(Collectors.toList());

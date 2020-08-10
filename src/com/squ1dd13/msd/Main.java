@@ -71,7 +71,7 @@ public class Main {
         highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
         highLevelScript.print();
 
-        String maths = "31 + 4 * 2 / ( 1 - 5 )";
+        String maths = "1 * -2";
         var lexedMaths = Parser.filterBlankTokens(Lexer.lex(maths));
         var tokens = ArithmeticConverter.infixToPostfix2(lexedMaths);
 
