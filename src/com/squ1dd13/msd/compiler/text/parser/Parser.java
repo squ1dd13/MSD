@@ -1,6 +1,6 @@
 package com.squ1dd13.msd.compiler.text.parser;
 
-import com.squ1dd13.msd.compiler.constructs.*;
+import com.squ1dd13.msd.compiler.*;
 import com.squ1dd13.msd.compiler.text.lexer.*;
 import com.squ1dd13.msd.compiler.text.lexer.Token.*;
 import com.squ1dd13.msd.shared.*;

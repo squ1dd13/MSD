@@ -1,5 +1,6 @@
 package com.squ1dd13.msd.shared;
 
+// TODO: Combine high and low level type classes.
 public enum HighLevelType {
     // There are fewer types here than in the disassembler because
     //  the disassembler needs to know all of the types. Here, we can use higher-level

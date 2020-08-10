@@ -1,6 +1,6 @@
-package com.squ1dd13.msd.compiler.constructs.language;
+package com.squ1dd13.msd.compiler.language;
 
-import com.squ1dd13.msd.compiler.constructs.*;
+import com.squ1dd13.msd.compiler.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;

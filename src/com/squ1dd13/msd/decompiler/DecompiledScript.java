@@ -4,6 +4,7 @@ import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
 
+// TODO: Remove DecompiledScript
 public class DecompiledScript {
     public List<Command> commands = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package com.squ1dd13.msd.compiler.constructs;
+package com.squ1dd13.msd.compiler;
 
 import java.util.*;
 

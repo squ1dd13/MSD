@@ -9,7 +9,7 @@ import java.util.*;
 public class Command {
     public static final Map<Integer, Command> commands = new HashMap<>();
 
-    private ParamInfo[] paramInfo = null;
+    private ParamInfo[] paramInfo;
 
     public int opcode;
     public int offset;
