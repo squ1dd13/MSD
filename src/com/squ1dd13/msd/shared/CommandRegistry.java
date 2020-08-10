@@ -152,6 +152,16 @@ public class CommandRegistry implements Serializable {
         return entry;
     }
 
+    public static void addPseudoCommands() {
+        var conditionalEntry =
+            addCommand(new Command(Opcode.RelativeConditionalJump.get(), "relative_jump_conditional()"));
+        var unconditionalEntry =
+            addCommand(new Command(Opcode.RelativeUnconditionalJump.get(), "relative_jump_unconditional()"));
+
+        conditionalEntry.parameterTypes.add(new CommandEntry.ParameterType(LowLevelType.S32));
+        unconditionalEntry.parameterTypes.add(new CommandEntry.ParameterType(LowLevelType.S32));
+    }
+
     public static boolean contains(int opcode) {
         return shared.commandEntries.containsKey(opcode);
     }

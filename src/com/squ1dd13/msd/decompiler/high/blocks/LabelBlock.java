@@ -14,7 +14,7 @@ public class LabelBlock implements CodeBlock {
 
     @Override
     public List<String> toLineStrings() {
-        List<String> strings = new ArrayList<>(List.of("", "label_" + offset + ":"));
+        List<String> strings = new ArrayList<>(List.of("", ""));//"label_" + offset + ":"));
         strings.addAll(block.toLineStrings());
 
         return strings;

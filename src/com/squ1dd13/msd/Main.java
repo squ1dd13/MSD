@@ -10,6 +10,7 @@ import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 public class Main {
     public static void compile(String inPath, String outPath) throws IOException {
@@ -23,8 +24,17 @@ public class Main {
             }
         }
 
+        var tokens = Lexer.lex(builder.toString());
+
+        var parsed = new Parser(tokens).parseTokens2();
+
+        List<Compilable> commandList = new ArrayList<>();
+        for(Compilable compilable : parsed) {
+            commandList.addAll(compilable.toCommands());
+        }
+
         CompiledScript script = new CompiledScript();
-        script.elements = new Parser(Lexer.lex(builder.toString())).parseTokens();
+        script.elements = commandList;
         script.compileAndWrite(outPath);
     }
 
@@ -42,6 +52,8 @@ public class Main {
             CommandRegistry.init();
         }
 
+        CommandRegistry.addPseudoCommands();
+
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
 
         SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
@@ -49,9 +61,9 @@ public class Main {
 
         HighLevelScript highLevelScript = new HighLevelScript(script);
         highLevelScript.print();
-
+//
         compile(
-            "/Users/squ1dd13/Documents/MSD-Project/script_.msd.txt",
+            "/Users/squ1dd13/Documents/MSD-Project/script.msd",
             "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
         );
 

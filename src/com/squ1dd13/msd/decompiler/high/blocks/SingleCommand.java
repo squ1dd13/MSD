@@ -15,6 +15,6 @@ public class SingleCommand implements CodeBlock {
 
     @Override
     public List<String> toLineStrings() {
-        return List.of(command.formattedString());
+        return List.of(command.formattedString() + ";");
     }
 }

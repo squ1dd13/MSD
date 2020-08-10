@@ -13,6 +13,8 @@ public class ParsedConditional implements CanBeCompilable {
     public List<Token> bodyTokens = null;
     public int tokenLength;
 
+    public ParsedConditional(){}
+
     public ParsedConditional(List<Token> unfiltered) {
         List<Token> tokens = Parser.filterBlankTokens(unfiltered);
 
