@@ -110,7 +110,7 @@ public class Parser {
     }
 
     private static List<Token> readCurrentLevel(Iterator<Token> iterator, TokenType open, TokenType close) {
-        // Assume the current level is 1.
+        // The current level should be 1, because the opening token should have been read.
         int level = 1;
 
         List<Token> levelTokens = new ArrayList<>();
@@ -312,78 +312,7 @@ public class Parser {
 
         return command;
     }
-
-    private Token peek() {
-        return tokenList.get(index);
-    }
-
-    private Token peekNotBlank() {
-        for(int i = 0; index + i < tokenList.size(); ++i) {
-            Token t = tokenList.get(index + i);
-
-            if(t.isNot(TokenType.Whitespace) && t.isNot(TokenType.Newline)) {
-                return t;
-            }
-        }
-
-        return null;
-    }
-
-    private Token readNext() {
-        return tokenList.get(index++);
-    }
-
-    private Token readNotBlank() {
-        skipBlank();
-        return readNext();
-    }
-
-    private void skip(TokenType... skipTypes) {
-        List<TokenType> skipping = Arrays.asList(skipTypes);
-        while(skipping.contains(peek().type)) index++;
-    }
-
-    private void skipBlank() {
-        skip(TokenType.Whitespace, TokenType.Newline);
-    }
-
-    public ParsedCommand readCommand() {
-        Token nameToken = readNotBlank();
-        System.out.println("command: " + nameToken.getText());
-
-        Token firstBracket = readNotBlank();
-
-        if(!firstBracket.is(TokenType.OpenBracket)) {
-            System.out.println("Not a bracket");
-        }
-
-        List<Token> argTokens = new ArrayList<>();
-
-        while(peekNotBlank() != null && peekNotBlank().isNot(TokenType.CloseBracket)) {
-            argTokens.add(readNotBlank());
-        }
-
-        ParsedCommand command = new ParsedCommand();
-        command.nameToken = nameToken;
-
-        List<List<Token>> argumentLists = splitTokens(argTokens, TokenType.Comma);
-        for(var argList : argumentLists) {
-            if(argList.size() != 1) {
-                Util.emitFatalError("Invalid argument in call to '" + nameToken.getText() + "'");
-            }
-
-            command.argumentTokens.add(argList.get(0));
-        }
-
-        readNext();
-
-        return command;
-    }
-
-    public ParsedConditional parseIf() {
-        return new ParsedConditional(tokenList);
-    }
-
+    
     public List<Compilable> parseTokens2() {
         // To make programming easier, statements are separated by semicolons (';').
         // Whitespace actually has no significance and is just filtered out here.
@@ -404,54 +333,5 @@ public class Parser {
         }
 
         return parsedObjects;
-    }
-
-    public List<Compilable> parseTokens() {
-        List<Token> cleanTokens = filterBlankTokens(tokenList);
-
-        List<ParsedConditional> removedConditionals = new ArrayList<>();
-
-        List<Token> pureStatements = new ArrayList<>();
-        tokenList = cleanTokens;
-        for(index = 0; index < cleanTokens.size(); ++index) {
-            if(false && peek().getText().equals("if")) {
-                int conditionalIndex = removedConditionals.size();
-                removedConditionals.add(parseIf());
-
-                pureStatements.add(
-                    Token.withType(TokenType.None).withInt(conditionalIndex)
-                );
-
-                pureStatements.add(Token.withType(TokenType.Semicolon));
-                index += removedConditionals.get(conditionalIndex).tokenLength;
-            } else {
-                pureStatements.add(peek());
-            }
-        }
-
-        cleanTokens = pureStatements;
-
-        index = 0;
-        List<List<Token>> statements = splitTokens(cleanTokens, TokenType.Semicolon);
-
-        List<Compilable> elements = new ArrayList<>();
-        for(List<Token> statement : statements) {
-            tokenList = statement;
-            index = 0;
-
-            System.out.println(statement.get(0).type);
-
-            if(statement.get(0).type == TokenType.None) {
-                elements.add(removedConditionals.get(statement.get(0).getInteger()).toCompilable());
-                continue;
-            }
-
-            ParsedCommand command = readCommand();
-            System.out.println(command.nameToken);
-
-            elements.add(command.toCompilable());
-        }
-
-        return elements;
     }
 }
