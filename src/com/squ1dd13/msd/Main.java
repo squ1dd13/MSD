@@ -12,6 +12,11 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+// Nowhere better to put these...
+// TODO: Add comments with GXT contents (when GXT file is referenced).
+// TODO: Add support for main.scm
+// TODO: Add basic .img packing/unpacking capabilities for script.img. (Maybe decompile the whole thing.)
+
 public class Main {
     public static void compile(String inPath, String outPath) throws IOException {
         StringBuilder builder = new StringBuilder();
@@ -34,7 +39,7 @@ public class Main {
             commandList.addAll(compilable.toCommands());
         }
 
-        CompiledScript script = new CompiledScript();
+        CompilableScript script = new CompilableScript();
         script.elements = commandList;
         script.compileAndWrite(outPath);
     }

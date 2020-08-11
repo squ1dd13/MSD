@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-// TODO: Completely restructure parser.
 public class Parser {
     private static final List<IdentifierChanger> identifierChangers = new ArrayList<>();
     private List<Token> tokenList;
