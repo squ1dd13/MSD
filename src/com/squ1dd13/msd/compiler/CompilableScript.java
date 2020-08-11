@@ -29,8 +29,6 @@ public class CompilableScript {
     }
 
     public void compileAndWrite(String filePath) throws IOException {
-        // TODO: Use some sort of flag to enable/disable padding.
-
         FileOutputStream stream = new FileOutputStream(filePath);
 
         List<BasicCommand> allCommands = elements.stream().map(
@@ -54,11 +52,6 @@ public class CompilableScript {
                 stream.write(b);
             }
         }
-
-        // For script.img scripts, the output is padded to the next multiple of 2048 bytes.
-        // This may just be my IMG editor messing up the output though...
-        int paddedSize = Util.roundUpToMultiple(offset, 2048);
-        stream.write(new byte[paddedSize - offset]);
 
         stream.close();
     }

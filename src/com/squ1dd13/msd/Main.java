@@ -7,6 +7,7 @@ import com.squ1dd13.msd.decompiler.*;
 import com.squ1dd13.msd.decompiler.disassembler.*;
 import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.misc.gxt.*;
+import com.squ1dd13.msd.misc.img.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
@@ -17,6 +18,7 @@ import java.util.*;
 // TODO: Add comments with GXT contents (when GXT file is referenced).
 // TODO: Add support for main.scm
 // TODO: Add basic .img packing/unpacking capabilities for script.img. (Maybe decompile the whole thing.)
+// TODO: Use Optional<...> instead of random null returns (gonna take a while)
 
 public class Main {
     public static void compile(String inPath, String outPath) throws IOException {
@@ -77,21 +79,24 @@ public class Main {
         highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
         highLevelScript.print();
 
-        String maths = "1 * -2";
-        var lexedMaths = Parser.filterBlankTokens(Lexer.lex(maths));
-        var tokens = ArithmeticConverter.infixToPostfix2(lexedMaths);
-
-        StringBuilder expressionBuilder = new StringBuilder();
-        for(Token t : tokens) {
-            expressionBuilder.append(t.hasText ? t.getText() : t.getInteger()).append(' ');
-        }
-
-        System.out.println(maths + "\nbecomes\n" + expressionBuilder);
-
-        System.out.println(ArithmeticConverter.solve(tokens));
-
         GXT gxt = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
         gxt.print();
+
+        IMG img = new IMG("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/data/script/script.img");
+        img.withOpen(
+            archive -> {
+                var buf = archive.get("trains.scm");
+                if(buf.isPresent()) {
+                    try {
+                        Files.write(Paths.get("/Users/squ1dd13/Documents/thing.scm"), buf.get().array());
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Util.emitWarning("No file");
+                }
+            }
+        );
 
         System.out.println("Saving registry...");
         CommandRegistry.save(registryPath);
