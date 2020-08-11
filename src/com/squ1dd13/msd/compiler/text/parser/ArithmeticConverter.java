@@ -32,7 +32,7 @@ public class ArithmeticConverter {
 
             if(isUnary) {
                 if(!mayBeUnary.contains(token.getText())) {
-                    Util.emitFatalError("Operator '" + token.getText() + "' is not a unary operator");
+                    Util.emitFatalError("Operator '" + token.getText() + "' is not unary");
                 }
 
                 infix.set(i, token.withText("u" + token.getText()));

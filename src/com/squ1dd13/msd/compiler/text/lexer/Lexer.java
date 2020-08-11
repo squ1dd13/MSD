@@ -106,6 +106,9 @@ public class Lexer {
             case ';':
                 return Token.withType(Token.TokenType.Semicolon);
 
+            case ':':
+                return Token.withType(Token.TokenType.Colon);
+
             case '{':
                 return Token.withType(Token.TokenType.OpenBrace);
 

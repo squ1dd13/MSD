@@ -16,6 +16,11 @@ public class UsingStatement implements IdentifierChanger {
     private final String input;
     private final Token output;
 
+    public UsingStatement(String input, Token output) {
+        this.input = input;
+        this.output = output;
+    }
+
     public UsingStatement(List<Token> statementTokens) {
         final Set<String> forbiddenKeywords = Set.of(
             "if",

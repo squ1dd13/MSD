@@ -9,9 +9,34 @@ import com.squ1dd13.msd.shared.*;
 import java.util.*;
 import java.util.stream.*;
 
+// TODO: Completely restructure parser.
 public class Parser {
+    private static final List<IdentifierChanger> identifierChangers = new ArrayList<>();
+    private List<Token> tokenList;
+    private int index;
+
+    // TODO: Make 'if' command illegal.
+
     public Parser(List<Token> tokens) {
         tokenList = filterBlankTokens(tokens);
+    }
+
+    // Find all labels in a list of tokens. This should be done before
+    //  parsing any commands, because goto() and suchlike may rely on labels.
+    private static void findLabels(List<Token> tokens) {
+        // Start at index 1 so we can always look behind.
+        for(int i = 1; i < tokens.size(); ++i) {
+            if(tokens.get(i).is(TokenType.Colon)) {
+                // The previous token was the label name.
+                Token labelNameToken = tokens.get(i - 1);
+
+                if(!labelNameToken.is(TokenType.IdentifierOrKeyword)) {
+                    Util.emitFatalError("Label name must be a valid identifier");
+                }
+
+                // TODO: Finish implementing labels
+            }
+        }
     }
 
     public static boolean tokenMatches(Token patternToken, Token actualToken) {
@@ -32,14 +57,14 @@ public class Parser {
         return patternToken.type == actualToken.type;
     }
 
-    // TODO: Make 'if' command illegal.
+    public static List<List<Token>> splitTokens(List<Token> tokens, TokenType... delims) {
+        List<TokenType> delimiters = Arrays.asList(delims);
 
-    public static List<List<Token>> splitTokens(List<Token> tokens, TokenType delim) {
         List<List<Token>> tokenLists = new ArrayList<>();
 
         List<Token> currentList = new ArrayList<>();
         for(Token tkn : tokens) {
-            if(tkn.is(delim)) {
+            if(delimiters.contains(tkn.type)) {
                 tokenLists.add(new ArrayList<>(currentList));
                 currentList.clear();
             } else {
@@ -78,84 +103,10 @@ public class Parser {
         return tokenLists;
     }
 
-    private List<Token> tokenList;
-    private int index;
-
-    private Token peek() {
-        return tokenList.get(index);
-    }
-
-    private Token peekNotBlank() {
-        for(int i = 0; index + i < tokenList.size(); ++i) {
-            Token t = tokenList.get(index + i);
-
-            if(t.isNot(TokenType.Whitespace) && t.isNot(TokenType.Newline)) {
-                return t;
-            }
-        }
-
-        return null;
-    }
-
     public static List<Token> filterBlankTokens(Collection<Token> tokens) {
         return tokens.stream().filter(
             t -> t.isNot(TokenType.Whitespace) && t.isNot(TokenType.Newline)
         ).collect(Collectors.toList());
-    }
-
-    private Token readNext() {
-        return tokenList.get(index++);
-    }
-
-    private Token readNotBlank() {
-        skipBlank();
-        return readNext();
-    }
-
-    private void skip(TokenType... skipTypes) {
-        List<TokenType> skipping = Arrays.asList(skipTypes);
-        while(skipping.contains(peek().type)) index++;
-    }
-
-    private void skipBlank() {
-        skip(TokenType.Whitespace, TokenType.Newline);
-    }
-
-    public ParsedCommand readCommand() {
-        Token nameToken = readNotBlank();
-        System.out.println("command: " + nameToken.getText());
-
-        Token firstBracket = readNotBlank();
-
-        if(!firstBracket.is(TokenType.OpenBracket)) {
-            System.out.println("Not a bracket");
-        }
-
-        List<Token> argTokens = new ArrayList<>();
-
-        while(peekNotBlank() != null && peekNotBlank().isNot(TokenType.CloseBracket)) {
-            argTokens.add(readNotBlank());
-        }
-
-        ParsedCommand command = new ParsedCommand();
-        command.nameToken = nameToken;
-
-        List<List<Token>> argumentLists = splitTokens(argTokens, TokenType.Comma);
-        for(var argList : argumentLists) {
-            if(argList.size() != 1) {
-                Util.emitFatalError("Invalid argument in call to '" + nameToken.getText() + "'");
-            }
-
-            command.argumentTokens.add(argList.get(0));
-        }
-
-        readNext();
-
-        return command;
-    }
-
-    public ParsedConditional parseIf() {
-        return new ParsedConditional(tokenList);
     }
 
     private static List<Token> readCurrentLevel(Iterator<Token> iterator, TokenType open, TokenType close) {
@@ -179,8 +130,6 @@ public class Parser {
 
         return levelTokens;
     }
-
-    private static final List<IdentifierChanger> identifierChangers = new ArrayList<>();
 
     private static Token preprocessIdentifier(Token t) {
         Token currentValue = Token.withType(t.type).withText(t.getText());
@@ -216,28 +165,6 @@ public class Parser {
         return realConditional;
     }
 
-    public List<Compilable> parseTokens2() {
-        // To make programming easier, statements are separated by semicolons (';').
-        // Whitespace actually has no significance and is just filtered out here.
-        tokenList = filterBlankTokens(tokenList);
-
-        List<Compilable> parsedObjects = new ArrayList<>();
-
-        Iterator<Token> iterator = tokenList.iterator();
-        while(iterator.hasNext()) {
-            Token token = iterator.next();
-
-            if(token.is(TokenType.IdentifierOrKeyword) && token.getText().equals("if")) {
-                parsedObjects.add(readConditional(iterator));
-            } else {
-                var command = readNextCommand(token, iterator);
-                if(command != null) parsedObjects.add(command);
-            }
-        }
-
-        return parsedObjects;
-    }
-
     private static List<Token> readStatement(Iterator<Token> iterator) {
         List<Token> statement = new ArrayList<>();
 
@@ -251,13 +178,11 @@ public class Parser {
         return statement;
     }
 
-    private static List<Token> preprocess(List<Token> tokens) {
+    private static void preprocess(List<Token> tokens) {
         for(int i = 0; i < tokens.size(); ++i) {
             if(tokens.get(i).isNot(TokenType.IdentifierOrKeyword)) continue;
             tokens.set(i, preprocessIdentifier(tokens.get(i)));
         }
-
-        return tokens;
     }
 
     private static BasicCommand readNextCommand(Token nameToken, Iterator<Token> iterator) {
@@ -356,8 +281,8 @@ public class Parser {
                 // First, check if all the tokens are mathematical.
                 if(argumentTokens.stream().allMatch(token ->
                     token.is(TokenType.Operator)
-                    || token.is(TokenType.FloatLiteral)
-                    || token.is(TokenType.IntLiteral))) {
+                        || token.is(TokenType.FloatLiteral)
+                        || token.is(TokenType.IntLiteral))) {
 
                     var postfixTokens = ArithmeticConverter.infixToPostfix2(argumentTokens);
                     Optional<Double> result = ArithmeticConverter.solve(postfixTokens);
@@ -386,6 +311,99 @@ public class Parser {
         }
 
         return command;
+    }
+
+    private Token peek() {
+        return tokenList.get(index);
+    }
+
+    private Token peekNotBlank() {
+        for(int i = 0; index + i < tokenList.size(); ++i) {
+            Token t = tokenList.get(index + i);
+
+            if(t.isNot(TokenType.Whitespace) && t.isNot(TokenType.Newline)) {
+                return t;
+            }
+        }
+
+        return null;
+    }
+
+    private Token readNext() {
+        return tokenList.get(index++);
+    }
+
+    private Token readNotBlank() {
+        skipBlank();
+        return readNext();
+    }
+
+    private void skip(TokenType... skipTypes) {
+        List<TokenType> skipping = Arrays.asList(skipTypes);
+        while(skipping.contains(peek().type)) index++;
+    }
+
+    private void skipBlank() {
+        skip(TokenType.Whitespace, TokenType.Newline);
+    }
+
+    public ParsedCommand readCommand() {
+        Token nameToken = readNotBlank();
+        System.out.println("command: " + nameToken.getText());
+
+        Token firstBracket = readNotBlank();
+
+        if(!firstBracket.is(TokenType.OpenBracket)) {
+            System.out.println("Not a bracket");
+        }
+
+        List<Token> argTokens = new ArrayList<>();
+
+        while(peekNotBlank() != null && peekNotBlank().isNot(TokenType.CloseBracket)) {
+            argTokens.add(readNotBlank());
+        }
+
+        ParsedCommand command = new ParsedCommand();
+        command.nameToken = nameToken;
+
+        List<List<Token>> argumentLists = splitTokens(argTokens, TokenType.Comma);
+        for(var argList : argumentLists) {
+            if(argList.size() != 1) {
+                Util.emitFatalError("Invalid argument in call to '" + nameToken.getText() + "'");
+            }
+
+            command.argumentTokens.add(argList.get(0));
+        }
+
+        readNext();
+
+        return command;
+    }
+
+    public ParsedConditional parseIf() {
+        return new ParsedConditional(tokenList);
+    }
+
+    public List<Compilable> parseTokens2() {
+        // To make programming easier, statements are separated by semicolons (';').
+        // Whitespace actually has no significance and is just filtered out here.
+        tokenList = filterBlankTokens(tokenList);
+
+        List<Compilable> parsedObjects = new ArrayList<>();
+
+        Iterator<Token> iterator = tokenList.iterator();
+        while(iterator.hasNext()) {
+            Token token = iterator.next();
+
+            if(token.is(TokenType.IdentifierOrKeyword) && token.getText().equals("if")) {
+                parsedObjects.add(readConditional(iterator));
+            } else {
+                var command = readNextCommand(token, iterator);
+                if(command != null) parsedObjects.add(command);
+            }
+        }
+
+        return parsedObjects;
     }
 
     public List<Compilable> parseTokens() {
