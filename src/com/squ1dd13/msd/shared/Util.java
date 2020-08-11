@@ -156,4 +156,27 @@ public class Util {
     public static <T> List<T> between(List<T> list, T a, T b) {
         return list.subList(list.indexOf(a) + 1, list.lastIndexOf(b));
     }
+
+    public static String readString(RandomAccessFile randomAccessFile, int length) throws IOException {
+        byte[] buf = new byte[length];
+        randomAccessFile.read(buf);
+
+        int[] bytes = byteArrayToIntArray(buf);
+
+        StringBuilder builder = new StringBuilder();
+        for(int b : bytes) {
+            if(b == 0) break;
+
+            builder.append((char)b);
+        }
+
+        return builder.toString();//new String(buf);
+    }
+
+    public static long readUnsignedInt(RandomAccessFile randomAccessFile) throws IOException {
+        byte[] buf = new byte[4];
+        randomAccessFile.read(buf);
+
+        return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xFFFFFFFFL;
+    }
 }

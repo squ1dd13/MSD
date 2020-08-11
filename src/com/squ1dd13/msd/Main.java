@@ -6,6 +6,7 @@ import com.squ1dd13.msd.compiler.text.parser.*;
 import com.squ1dd13.msd.decompiler.*;
 import com.squ1dd13.msd.decompiler.disassembler.*;
 import com.squ1dd13.msd.decompiler.high.*;
+import com.squ1dd13.msd.misc.gxt.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
@@ -88,6 +89,9 @@ public class Main {
         System.out.println(maths + "\nbecomes\n" + expressionBuilder);
 
         System.out.println(ArithmeticConverter.solve(tokens));
+
+        GXT gxt = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
+        gxt.print();
 
         System.out.println("Saving registry...");
         CommandRegistry.save(registryPath);
