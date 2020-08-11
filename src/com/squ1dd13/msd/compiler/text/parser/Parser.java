@@ -7,6 +7,7 @@ import com.squ1dd13.msd.compiler.text.lexer.Token.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 // TODO: Completely restructure parser.
@@ -81,12 +82,12 @@ public class Parser {
         return tokenLists;
     }
 
-    public static List<List<Token>> splitTokens(List<Token> tokens, Token delim) {
+    public static List<List<Token>> splitTokens(List<Token> tokens, Predicate<Token> splitPredicate) {
         List<List<Token>> tokenLists = new ArrayList<>();
 
         List<Token> currentList = new ArrayList<>();
         for(Token tkn : tokens) {
-            if(tokenMatches(delim, tkn)) {
+            if(splitPredicate.test(tkn)) {
                 tokenLists.add(new ArrayList<>(currentList));
                 currentList.clear();
             } else {
@@ -142,13 +143,16 @@ public class Parser {
     }
 
     private static Conditional readConditional(Iterator<Token> iterator) {
+        // TODO: Check token types to enforce syntax.
+
         // The 'if' will have already been read, so we start with a bracket.
-        Token openBracket = iterator.next();
+        iterator.next();
 
         // Read the contents of the brackets.
         var conditionTokens = readCurrentLevel(iterator, TokenType.OpenBracket, TokenType.CloseBracket);
 
-        Token openBrace = iterator.next();
+        // Skip the opening brace.
+        iterator.next();
 
         // Read the contents of the braces.
         var bodyTokens = readCurrentLevel(iterator, TokenType.OpenBrace, TokenType.CloseBrace);
@@ -156,7 +160,7 @@ public class Parser {
         Conditional realConditional = new Conditional();
         realConditional.mainBodyElements = new ArrayList<>();
 
-        var basicCommands = new Parser(bodyTokens).parseTokens2();//parseCommandTokens();
+        var basicCommands = new Parser(bodyTokens).parseTokens();//parseCommandTokens();
         realConditional.mainBodyElements.addAll(basicCommands);
 
         var conditionCommands = parseSingleCommand(conditionTokens);
@@ -244,6 +248,22 @@ public class Parser {
         return arg;
     }
 
+    private static Token createResultToken(double result, LowLevelType targetType) {
+        Token resultToken = new Token();
+
+        if(targetType == LowLevelType.F32) {
+            float floatResult = (float)result;
+            resultToken = Token.withType(TokenType.FloatLiteral).withFloat(floatResult);
+        } else if(targetType.highLevelType().isInteger()) {
+            int intResult = (int)result;
+            resultToken = Token.withType(TokenType.IntLiteral).withInt(intResult);
+        } else {
+            Util.emitFatalError("Cannot evaluate mathematical expression when parameter is non-numeric");
+        }
+
+        return resultToken;
+    }
+
     public static BasicCommand parseSingleCommand(List<Token> tokens) {
         for(int i = 0; i < tokens.size(); ++i) {
             if(tokens.get(i).is(TokenType.IdentifierOrKeyword)) {
@@ -288,17 +308,7 @@ public class Parser {
                     Optional<Double> result = ArithmeticConverter.solve(postfixTokens);
 
                     if(result.isPresent()) {
-                        Token resultToken = new Token();
-                        if(argumentType == LowLevelType.F32) {
-                            float floatResult = (float)result.get().doubleValue();
-                            resultToken = Token.withType(TokenType.FloatLiteral).withFloat(floatResult);
-                        } else if(argumentType.highLevelType().isInteger()) {
-                            int intResult = (int)result.get().doubleValue();
-                            resultToken = Token.withType(TokenType.IntLiteral).withInt(intResult);
-                        } else {
-                            Util.emitFatalError("Cannot evaluate mathematical expression when parameter is non-numeric");
-                        }
-
+                        Token resultToken = createResultToken(result.get(), argumentType);
                         argumentTokens = new ArrayList<>(List.of(resultToken));
                     }
                 } else {
@@ -312,8 +322,8 @@ public class Parser {
 
         return command;
     }
-    
-    public List<Compilable> parseTokens2() {
+
+    public List<Compilable> parseTokens() {
         // To make programming easier, statements are separated by semicolons (';').
         // Whitespace actually has no significance and is just filtered out here.
         tokenList = filterBlankTokens(tokenList);

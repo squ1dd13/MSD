@@ -27,7 +27,7 @@ public class Main {
 
         var tokens = Lexer.lex(builder.toString());
 
-        var parsed = new Parser(tokens).parseTokens2();
+        var parsed = new Parser(tokens).parseTokens();
 
         List<Compilable> commandList = new ArrayList<>();
         for(Compilable compilable : parsed) {
