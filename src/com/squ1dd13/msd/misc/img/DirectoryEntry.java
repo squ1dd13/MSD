@@ -10,10 +10,18 @@ class DirectoryEntry {
     public long sectorCount;
     public String fileName;
 
+    // Where the entry is in the file.
+    public long entryOffset;
+
     public DirectoryEntry(RandomAccessFile randomAccessFile) throws IOException {
+        entryOffset = randomAccessFile.getFilePointer();
         sectorOffset = Util.readUnsignedInt(randomAccessFile);
         sectorCount = Util.readUnsignedInt(randomAccessFile);
         fileName = Util.readString(randomAccessFile, 24);
+    }
+
+    public DirectoryEntry() {
+
     }
 
     public ByteBuffer readData(RandomAccessFile randomAccessFile) throws IOException {
@@ -32,5 +40,13 @@ class DirectoryEntry {
         randomAccessFile.seek(pos);
 
         return byteBuffer;
+    }
+
+    // Writes the entry to the file. This will advance the position in the file.
+    public void writeEntry(RandomAccessFile randomAccessFile) throws IOException {
+        randomAccessFile.seek(entryOffset);
+        Util.writeUnsignedInt(randomAccessFile, sectorOffset);
+        Util.writeUnsignedInt(randomAccessFile, sectorCount);
+        Util.writeString(randomAccessFile, fileName, 24);
     }
 }

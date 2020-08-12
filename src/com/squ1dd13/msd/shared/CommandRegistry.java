@@ -130,7 +130,12 @@ public class CommandRegistry implements Serializable {
     }
 
     public static CommandEntry get(int opcode) {
-        return shared.commandEntries.getOrDefault(opcode, null);
+        var r = shared.commandEntries.getOrDefault(opcode, null);
+        if(r == null) {
+            return addCommand(new Command(opcode, "unknown_command_" + opcode + "()"));
+        }
+
+        return r;
     }
 
     public static CommandEntry get(Command command) {

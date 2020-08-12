@@ -11,6 +11,7 @@ import com.squ1dd13.msd.misc.img.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -65,38 +66,43 @@ public class Main {
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
 
-        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
+        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/junkfud.scm");
         DecompiledScript script = scm.toScript();
+//        script.print();
 
         HighLevelScript highLevelScript = new HighLevelScript(script);
-//        highLevelScript.print();
-//
-        compile(
-            "/Users/squ1dd13/Documents/MSD-Project/script.msd",
-            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
-        );
-
-        highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
         highLevelScript.print();
+//
+//        compile(
+//            "/Users/squ1dd13/Documents/MSD-Project/script.msd",
+//            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
+//        );
 
-        GXT gxt = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
-        gxt.print();
+//        highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
+//        highLevelScript.print();
 
-        IMG img = new IMG("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/data/script/script.img");
-        img.withOpen(
-            archive -> {
-                var buf = archive.get("trains.scm");
-                if(buf.isPresent()) {
-                    try {
-                        Files.write(Paths.get("/Users/squ1dd13/Documents/thing.scm"), buf.get().array());
-                    } catch(IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Util.emitWarning("No file");
-                }
-            }
-        );
+//        GXT gxt = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
+//        gxt.print();
+
+        byte[] scmBytes = Files.readAllBytes(Paths.get("/Users/squ1dd13/Documents/MSD-Project/compiled.scm"));
+
+//        IMG img = new IMG("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/data/script/script copy.img");
+//        img.withOpen(
+//            archive -> {
+//                var buf = archive.get("trains.scm");
+//                if(buf.isPresent()) {
+//                    try {
+//                        Files.write(Paths.get("/Users/squ1dd13/Documents/thing.scm"), buf.get().array());
+//                    } catch(IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    Util.emitWarning("No file");
+//                }
+
+//                archive.write("ammu.scm", ByteBuffer.wrap(scmBytes));
+//            }
+//        );
 
         System.out.println("Saving registry...");
         CommandRegistry.save(registryPath);

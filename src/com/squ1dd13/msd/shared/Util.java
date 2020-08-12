@@ -9,9 +9,9 @@ public class Util {
     public static int[] intToBytesLE(int v) {
         return new int[]{
             v & 0xFF,
-            (v >> 8) & 0xFF,
-            (v >> 16) & 0xFF,
-            (v >> 24) & 0xFF
+            v >> 8 & 0xFF,
+            v >> 16 & 0xFF,
+            v >> 24 & 0xFF
         };
     }
 
@@ -19,7 +19,7 @@ public class Util {
         int[] bytes = new int[n];
 
         for(int i = 0; i < n; ++i) {
-            bytes[i] = (v >> (i * 8)) & 0xFF;
+            bytes[i] = v >> i * 8 & 0xFF;
         }
 
         return bytes;
@@ -44,7 +44,7 @@ public class Util {
         int v = 0;
 
         for(int i = 0; i < n; ++i) {
-            v |= (bytes[i] << (i * 8));
+            v |= bytes[i] << i * 8;
         }
 
         return v;
@@ -55,10 +55,10 @@ public class Util {
     }
 
     public static float floatFromBytesLE(int[] bytes) {
-        int asInt = (bytes[0] & 0xFF)
-            | ((bytes[1] & 0xFF) << 8)
-            | ((bytes[2] & 0xFF) << 16)
-            | ((bytes[3] & 0xFF) << 24);
+        int asInt = bytes[0] & 0xFF
+            | (bytes[1] & 0xFF) << 8
+            | (bytes[2] & 0xFF) << 16
+            | (bytes[3] & 0xFF) << 24;
 
         return Float.intBitsToFloat(asInt);
     }
@@ -178,5 +178,26 @@ public class Util {
         randomAccessFile.read(buf);
 
         return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xFFFFFFFFL;
+    }
+
+    public static void writeUnsignedInt(RandomAccessFile randomAccessFile, long v) throws IOException {
+        int[] bytes = {
+            (int)(v & 0xFF),
+            (int)(v >> 8 & 0xFF),
+            (int)(v >> 16 & 0xFF),
+            (int)(v >> 24 & 0xFF)
+        };
+
+        for(int b : bytes) randomAccessFile.writeByte(b);
+    }
+
+    public static void writeString(RandomAccessFile randomAccessFile, String s, int len) throws IOException {
+        for(int i = 0; i < len; ++i) {
+            if(i >= s.length()) {
+                randomAccessFile.writeByte(0);
+            } else {
+                randomAccessFile.writeChar(s.charAt(i));
+            }
+        }
     }
 }

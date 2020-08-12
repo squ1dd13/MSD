@@ -37,9 +37,9 @@ public class ReversedCommand {
                 if(type == LowLevelType.StringVar) {
                     // Read the size and then the characters.
                     chars = new char[valueBytes[0]];
-                    length = valueBytes[0] + 1;
+                    length = valueBytes[0] + 2;
 
-                    for(int i = 1; i < valueBytes.length; ++i) {
+                    for(int i = 1; i < valueBytes.length && i - 1 < chars.length; ++i) {
                         chars[i - 1] = (char)valueBytes[i];
                     }
                 } else {
