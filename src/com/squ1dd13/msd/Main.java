@@ -62,6 +62,8 @@ public class Main {
             CommandRegistry.init();
         }
 
+        GXT.mainGXT = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
+
         CommandRegistry.addPseudoCommands();
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");

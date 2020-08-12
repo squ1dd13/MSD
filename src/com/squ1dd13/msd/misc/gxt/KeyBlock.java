@@ -25,14 +25,15 @@ class KeyBlock {
     }
 
     private static final CRC32 CRC = new CRC32();
-    private long calculateCRC(String s) {
+    private static long calculateCRC(String s) {
+        CRC.reset();
         CRC.update(s.getBytes());
 
         // GTA uses JAMCRC, so we need to invert the bits.
         // The long type is used so that unsigned ints can be stored,
         //  so if we bitwise AND the inverted bits with the max unsigned int
         //  value, we get an "unsigned" integer.
-        return (~CRC.getValue()) & 0xFFFFFFFFL;
+        return ~CRC.getValue() & 0xFFFFFFFFL;
     }
 
     public long offsetForKey(String key) {

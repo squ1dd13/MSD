@@ -63,7 +63,7 @@ public class ConditionalBlock implements CodeBlock {
             index += output.consumed;
         }
 
-        /*
+        // TODO: Add compiler support for 'while' loops.
         try {
             SingleCommand single = (SingleCommand)body.commands.get(body.commands.size() - 1);
             if(single.command.isJump() && single.command.jumpDest() == testCommand.offset) {
@@ -73,7 +73,6 @@ public class ConditionalBlock implements CodeBlock {
                 maybeWhile = true;
             }
         } catch(Exception ignored) { }
-        */
 
         if(addElseBlock) {
             try {

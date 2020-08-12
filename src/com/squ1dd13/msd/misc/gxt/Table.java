@@ -13,7 +13,8 @@ class Table {
     }
 
     public String get(String key) {
-        return dataBlock.getValue(keyBlock.offsetForKey(key));
+        var offset = keyBlock.offsetForKey(key);
+        return offset != -1L ? dataBlock.getValue(offset) : null;
     }
 
     public String get(long key) {

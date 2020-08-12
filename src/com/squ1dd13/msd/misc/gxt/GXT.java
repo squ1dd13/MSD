@@ -5,6 +5,7 @@ import java.io.*;
 // Currently only GTA: SA format (as with most other things here).
 public class GXT {
     private TableContentsBlock tableContentsBlock;
+    public static GXT mainGXT;
 
     public static GXT load(String path) throws IOException {
         GXT gxt = new GXT();
@@ -27,5 +28,9 @@ public class GXT {
 
     public void print() {
         tableContentsBlock.print();
+    }
+
+    public boolean contains(String key) {
+        return get(key) != null;
     }
 }
