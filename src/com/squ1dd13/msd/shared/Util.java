@@ -170,7 +170,7 @@ public class Util {
             builder.append((char)b);
         }
 
-        return builder.toString();//new String(buf);
+        return builder.toString();
     }
 
     public static long readUnsignedInt(RandomAccessFile randomAccessFile) throws IOException {
