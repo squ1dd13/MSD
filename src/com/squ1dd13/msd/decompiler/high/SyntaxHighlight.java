@@ -23,7 +23,7 @@ public class SyntaxHighlight {
         Blue(100, 100, 255),
         Red(255, 100, 100),
         LightBlue(200, 255, 255),
-        Gray(100, 100, 100),
+        Gray(120, 120, 120),
         LightPink(255, 200, 200),
         Pink(255, 150, 200),
         Orange(255, 150, 0),
@@ -51,11 +51,11 @@ public class SyntaxHighlight {
             .replaceAll("(?<=(?:if\\()|(?:while\\()|(?:and)|(?:or))(\\s*\\?[^(]+)", LightYellow.highlight("$1"))
             .replaceAll("if\\(([^)]+)\\)", Pink.highlight("if") + "($1)")
             .replaceAll("while\\(([^)]+)\\)", Pink.highlight("while") + "($1)")
-            .replaceAll("([^:]+):", BlueGreen.highlight("$1") + ":")
             .replaceAll("(&?local[^_]+_\\d+)", Orange.highlight("$1"))
             .replaceAll("(&?global[^_]+_\\d+)", Red.highlight("$1"))
             .replaceAll("(?<=(?:\\()|(?:, ))(-?[\\d.]+f?)", Green.highlight("$1"))
             .replaceAll("([^(]+)\\(", LightPink.highlight("$1") + "(")
-            .replaceAll("'(\\.|[^'])*'", MidBlue.highlight("$0"));
+            .replaceAll("\"(\\.|[^\"])*\"", MidBlue.highlight("$0"))
+            .replaceAll("(\\s*)//([^\\n]*)", Gray.highlight("$1/*$2 */"));
     }
 }

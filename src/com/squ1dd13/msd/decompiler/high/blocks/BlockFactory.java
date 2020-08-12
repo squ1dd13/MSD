@@ -19,20 +19,24 @@ public class BlockFactory {
         }
     }
 
+    static final boolean produceCompilableOutput = true;
+
     public static FactoryOutput createBlock(List<Command> commands, int index) {
         Command command = commands.get(index);
 
-        if(command.opcode == 0x50 && calledAddresses.contains(command.jumpDest())) {
-            return new FactoryOutput(new CallBlock(command), 1);
-        }
+        if(!produceCompilableOutput) {
+            if(command.opcode == 0x50 && calledAddresses.contains(command.jumpDest())) {
+                return new FactoryOutput(new CallBlock(command), 1);
+            }
 
-        if(!insideSub) {
-            if(calledAddresses.contains(command.offset)) {
-                insideSub = true;
-                SubroutineBlock subBlock = new SubroutineBlock(commands, index);
-                insideSub = false;
+            if(!insideSub) {
+                if(calledAddresses.contains(command.offset)) {
+                    insideSub = true;
+                    SubroutineBlock subBlock = new SubroutineBlock(commands, index);
+                    insideSub = false;
 
-                return new FactoryOutput(subBlock, subBlock.consumed);
+                    return new FactoryOutput(subBlock, subBlock.consumed);
+                }
             }
         }
 

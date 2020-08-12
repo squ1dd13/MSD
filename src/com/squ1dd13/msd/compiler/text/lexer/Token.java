@@ -113,7 +113,7 @@ public class Token {
     public String toString() {
         String valueString = customText == null
             ? customFloat == 0 ? Integer.toString(customInt) : Float.toString(customFloat)
-            : "'" + customText + "'";
+            : customText;
 
         return String.format(
             "Token(%s, %s)",

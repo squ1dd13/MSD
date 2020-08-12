@@ -184,7 +184,7 @@ public class IMG {
 
         String tempArchivePath = archivePath + ".tmp";
 
-        RandomAccessFile newArchive = new RandomAccessFile(tempArchivePath, "w");
+        RandomAccessFile newArchive = new RandomAccessFile(tempArchivePath, "rw");
 
         // Write the header.
         Util.writeString(newArchive, "VER2", 4);

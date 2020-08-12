@@ -59,7 +59,7 @@ public class DataValue {
                 return intValue + "";
 
             case Str:
-                return "'" + stringValue + "'";
+                return "\"" + stringValue + "\"";
         }
 
         final String base = "(" + type.name() + ")";
