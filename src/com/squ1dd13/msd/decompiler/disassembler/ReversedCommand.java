@@ -17,6 +17,10 @@ public class ReversedCommand {
 
         public ReversedArgument(int[] bytes) {
             typeCode = bytes[0];
+            if(typeCode > 0x13) {
+                bytes = Util.subArray(bytes, 1, bytes.length);
+                typeCode = bytes[0];
+            }
 
             valueBytes = new int[bytes.length - 1];
             System.arraycopy(bytes, 1, valueBytes, 0, bytes.length - 1);
@@ -58,8 +62,8 @@ public class ReversedCommand {
                 length = 5;
                 value.floatValue = Util.floatFromBytesLE(valueBytes);
             } else {
-                length = type.valueLength() + 1;
-                System.out.println("Unsupported type: " + type);
+                length = 7;
+                value.arrayValue = new ArrayValue(valueBytes);
             }
 
             return value;

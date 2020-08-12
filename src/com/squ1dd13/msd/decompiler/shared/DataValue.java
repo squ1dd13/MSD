@@ -8,6 +8,7 @@ public class DataValue {
     public String stringValue;
     public int intValue;
     public float floatValue;
+    public ArrayValue arrayValue;
 
     public DataValue(){}
 
@@ -56,7 +57,7 @@ public class DataValue {
                 return floatValue + "f";
 
             case Int:
-                return intValue + "";
+                return String.valueOf(intValue);
 
             case Str:
                 return "\"" + stringValue + "\"";
@@ -69,7 +70,7 @@ public class DataValue {
         }
 
         if(type.isArray()) {
-            return "<value>";
+            return arrayValue.toCodeString();
         }
 
         return "<unknown>";

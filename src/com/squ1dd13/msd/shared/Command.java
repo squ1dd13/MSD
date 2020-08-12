@@ -5,7 +5,6 @@ import com.squ1dd13.msd.decompiler.shared.*;
 import java.io.*;
 import java.util.*;
 
-// FIXME: Parameter type inference is broken.
 public class Command {
     public static final Map<Integer, Command> commands = new HashMap<>();
 

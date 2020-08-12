@@ -19,8 +19,7 @@ public class Variable {
         if(info == null) return;
 
         if(valueType != referenceType && valueType != AbstractType.Unknown && info.absoluteType != valueType) {
-            System.out.println("Warning: Variable with ref type " + referenceType + " used as " + valueType + " and " + info.absoluteType);
-            System.out.println("Newest use gets priority.");
+            return;
         }
 
         valueType = info.absoluteType;

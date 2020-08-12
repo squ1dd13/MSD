@@ -19,7 +19,7 @@ public class BlockFactory {
         }
     }
 
-    static final boolean produceCompilableOutput = true;
+    static final boolean produceCompilableOutput = false;
 
     public static FactoryOutput createBlock(List<Command> commands, int index) {
         Command command = commands.get(index);
