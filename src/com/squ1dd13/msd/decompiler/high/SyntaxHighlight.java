@@ -56,6 +56,8 @@ public class SyntaxHighlight {
             .replaceAll("(?<=(?:\\()|(?:, ))(-?[\\d.]+f?)", Green.highlight("$1"))
             .replaceAll("([^(]+)\\(", LightPink.highlight("$1") + "(")
             .replaceAll("\"(\\.|[^\"])*\"", MidBlue.highlight("$0"))
-            .replaceAll("(\\s*)//([^\\n]*)", Gray.highlight("$1/*$2 */"));
+            .replaceAll("(\\s*)//([^\\n]*)", Gray.highlight("$1/*$2 */"))
+            .replaceAll("([^\\s]+) (proc_[^(]+)", Blue.highlight("$1 ") + BlueGreen.highlight("$2"))
+            .replaceAll("void", Orange.highlight("$0"));
     }
 }

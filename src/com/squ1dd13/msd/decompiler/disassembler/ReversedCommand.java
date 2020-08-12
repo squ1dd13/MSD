@@ -1,5 +1,6 @@
 package com.squ1dd13.msd.decompiler.disassembler;
 
+import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.shared.*;
 
@@ -63,7 +64,7 @@ public class ReversedCommand {
                 value.floatValue = Util.floatFromBytesLE(valueBytes);
             } else {
                 length = 7;
-                value.arrayValue = new ArrayValue(valueBytes);
+                value.arrayValue = new ArrayValue(type, valueBytes);
             }
 
             return value;

@@ -53,9 +53,18 @@ public class Variable {
         return variableMap.getOrDefault(dataValueOffset(value), null);
     }
 
+    public static Variable get(int offset) {
+        return variableMap.getOrDefault(offset, null);
+    }
+
     public static boolean isRegistered(DataValue value) {
         if(!value.type.isVariable()) return false;
 
         return variableMap.containsKey(dataValueOffset(value));
+    }
+
+    @Override
+    public String toString() {
+        return (referenceType.isLocal() ? "local" : "global") + valueType + "_" + offset;
     }
 }
