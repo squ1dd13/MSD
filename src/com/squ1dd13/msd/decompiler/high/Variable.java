@@ -13,6 +13,8 @@ public class Variable {
     public int offset;
     public AbstractType referenceType = AbstractType.Unknown;
     public AbstractType valueType = AbstractType.Unknown;
+    private String customName;
+    public String customTypeName;
 
     public void registerUse(Command cmd, int index) {
         ParamInfo info = cmd.getParamInfo(index);
@@ -63,8 +65,24 @@ public class Variable {
         return variableMap.containsKey(dataValueOffset(value));
     }
 
+    public boolean hasCustomName() {
+        return customName != null;
+    }
+
+    public void setCustomName(String name) {
+        customName = name;
+    }
+
+    public static void set(DataValue dv, Variable v) {
+        variableMap.put(dataValueOffset(dv), v);
+    }
+
     @Override
     public String toString() {
-        return (referenceType.isLocal() ? "local" : "global") + valueType + "_" + offset;
+        String typeString = customTypeName == null ? valueType.toString() : customTypeName;
+        var base = (referenceType.isLocal() ? "local" : "global") + typeString + "_" + offset;
+
+        if(hasCustomName()) return base + "_" + customName;
+        return base;
     }
 }

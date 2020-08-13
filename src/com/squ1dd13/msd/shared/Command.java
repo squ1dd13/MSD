@@ -1,5 +1,6 @@
 package com.squ1dd13.msd.shared;
 
+import com.squ1dd13.msd.compiler.text.parser.*;
 import com.squ1dd13.msd.decompiler.shared.*;
 
 import java.io.*;
@@ -83,7 +84,35 @@ public class Command {
         );
     }
 
+    public String argumentString(int i) {
+        DataValue arg = arguments[i];
+
+        var str = arg.toString();
+        var paramInfo = getParamInfo(i);
+
+        String finalString = str;
+        if(paramInfo != null && paramInfo.isOutVal) {
+            finalString = "&" + str;
+        }
+
+        return finalString;
+    }
+
     public String formattedString() {
+        if(arguments.length > 0) {
+            if(arguments[0].type.isGlobal()) {
+                var className = ClassRegistry.getClassNameForGlobal(arguments[0].intValue);
+                if(className.isPresent()) {
+                    Optional<ClassParser> classObject = ClassRegistry.getClass(className.get());
+
+                    if(classObject.isPresent()) {
+                        var callStr = classObject.get().createCallString(this);
+                        if(callStr != null) return callStr;
+                    }
+                }
+            }
+        }
+
         var operationString = VariableOperation.forCommand(this);
         if(operationString != null) {
             return operationString.toString();

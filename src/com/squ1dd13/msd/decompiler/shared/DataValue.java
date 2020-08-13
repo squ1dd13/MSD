@@ -33,6 +33,11 @@ public class DataValue {
         }
     }
 
+    public DataValue(AbstractType type, int intValue) {
+        this.type = type;
+        this.intValue = intValue;
+    }
+
     public static DataValue withString(String s) {
         DataValue value = new DataValue();
         value.type = AbstractType.Str;
@@ -41,11 +46,15 @@ public class DataValue {
         return value;
     }
 
+    public boolean equalsVariable(DataValue other) {
+        return type == other.type && intValue == other.intValue;
+    }
+
     @Override
     public String toString() {
         if(Variable.isRegistered(this)) {
             var variable = Variable.get(this);
-            return (type.isLocal() ? "local" : "global") + variable.valueType + "_" + intValue;
+            return variable.toString();
         }
 
         switch(type) {

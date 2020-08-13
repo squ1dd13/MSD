@@ -30,8 +30,7 @@ public class HighLevelScript {
 
             for(int i = 0; i < arguments.length; i++) {
                 DataValue dataValue = arguments[i];
-                if(dataValue.type.isGlobal() || dataValue.type.isLocal()) {
-
+                if(dataValue.type.isVariable()) {
                     Variable.getOrCreate(dataValue).registerUse(command, i);
                 }
             }

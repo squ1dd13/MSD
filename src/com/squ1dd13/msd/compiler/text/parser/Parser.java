@@ -7,8 +7,6 @@ import com.squ1dd13.msd.compiler.text.lexer.Token.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 public class Parser {
     private static final List<IdentifierChanger> identifierChangers = new ArrayList<>();
@@ -18,7 +16,7 @@ public class Parser {
     // TODO: Make 'if' command illegal.
 
     public Parser(List<Token> tokens) {
-        tokenList = filterBlankTokens(tokens);
+        tokenList = ParserUtils.filterBlankTokens(tokens);
     }
 
     // Find all labels in a list of tokens. This should be done before
@@ -39,98 +37,6 @@ public class Parser {
         }
     }
 
-    public static boolean tokenMatches(Token patternToken, Token actualToken) {
-        if(patternToken == null) return true;
-
-        if(patternToken.hasText && actualToken.hasText) {
-            return patternToken.getText().equals(actualToken.getText());
-        }
-
-        if(patternToken.hasFloat && actualToken.hasFloat) {
-            return patternToken.getFloat() == actualToken.getFloat();
-        }
-
-        if(patternToken.hasInt && actualToken.hasInt) {
-            return patternToken.getInteger() == actualToken.getInteger();
-        }
-
-        return patternToken.type == actualToken.type;
-    }
-
-    public static List<List<Token>> splitTokens(List<Token> tokens, TokenType... delims) {
-        List<TokenType> delimiters = Arrays.asList(delims);
-
-        List<List<Token>> tokenLists = new ArrayList<>();
-
-        List<Token> currentList = new ArrayList<>();
-        for(Token tkn : tokens) {
-            if(delimiters.contains(tkn.type)) {
-                tokenLists.add(new ArrayList<>(currentList));
-                currentList.clear();
-            } else {
-                currentList.add(tkn);
-            }
-        }
-
-        if(currentList.isEmpty()) {
-            return tokenLists;
-        }
-
-        tokenLists.add(currentList);
-
-        return tokenLists;
-    }
-
-    public static List<List<Token>> splitTokens(List<Token> tokens, Predicate<Token> splitPredicate) {
-        List<List<Token>> tokenLists = new ArrayList<>();
-
-        List<Token> currentList = new ArrayList<>();
-        for(Token tkn : tokens) {
-            if(splitPredicate.test(tkn)) {
-                tokenLists.add(new ArrayList<>(currentList));
-                currentList.clear();
-            } else {
-                currentList.add(tkn);
-            }
-        }
-
-        if(currentList.isEmpty()) {
-            return tokenLists;
-        }
-
-        tokenLists.add(currentList);
-
-        return tokenLists;
-    }
-
-    public static List<Token> filterBlankTokens(Collection<Token> tokens) {
-        return tokens.stream().filter(
-            t -> t.isNot(TokenType.Whitespace) && t.isNot(TokenType.Newline)
-        ).collect(Collectors.toList());
-    }
-
-    private static List<Token> readCurrentLevel(Iterator<Token> iterator, TokenType open, TokenType close) {
-        // The current level should be 1, because the opening token should have been read.
-        int level = 1;
-
-        List<Token> levelTokens = new ArrayList<>();
-
-        while(iterator.hasNext()) {
-            Token t = iterator.next();
-
-            if(t.is(open)) {
-                level++;
-            } else if(t.is(close)) {
-                level--;
-            }
-
-            if(level == 0) break;
-            levelTokens.add(t);
-        }
-
-        return levelTokens;
-    }
-
     private static Token preprocessIdentifier(Token t) {
         Token currentValue = Token.withType(t.type).withText(t.getText());
 
@@ -148,13 +54,13 @@ public class Parser {
         iterator.next();
 
         // Read the contents of the brackets.
-        var conditionTokens = readCurrentLevel(iterator, TokenType.OpenBracket, TokenType.CloseBracket);
+        var conditionTokens = ParserUtils.readCurrentLevel(iterator, TokenType.OpenParen, TokenType.CloseParen);
 
         // Skip the opening brace.
         iterator.next();
 
         // Read the contents of the braces.
-        var bodyTokens = readCurrentLevel(iterator, TokenType.OpenBrace, TokenType.CloseBrace);
+        var bodyTokens = ParserUtils.readCurrentLevel(iterator, TokenType.OpenBrace, TokenType.CloseBrace);
 
         Conditional realConditional = new Conditional();
         realConditional.mainBodyElements = new ArrayList<>();
@@ -285,13 +191,13 @@ public class Parser {
         // Read the bracket.
         iterator.next();
 
-        var argumentListTokens = readCurrentLevel(iterator, TokenType.OpenBracket, TokenType.CloseBracket);
+        var argumentListTokens = ParserUtils.readCurrentLevel(iterator, TokenType.OpenParen, TokenType.CloseParen);
 
         // FIXME: splitTokens doesn't care about levels, so nested calls won't always work.
-        var separateArguments = splitTokens(argumentListTokens, TokenType.Comma);
+        var separateArguments = ParserUtils.splitTokens(argumentListTokens, TokenType.Comma);
 
         for(int i = 0; i < separateArguments.size(); ++i) {
-            List<Token> argumentTokens = filterBlankTokens(separateArguments.get(i));
+            List<Token> argumentTokens = ParserUtils.filterBlankTokens(separateArguments.get(i));
 
             LowLevelType argumentType = CommandRegistry.get(opcode).lowLevelParameters().get(i);
 
@@ -325,7 +231,7 @@ public class Parser {
     public List<Compilable> parseTokens() {
         // To make programming easier, statements are separated by semicolons (';').
         // Whitespace actually has no significance and is just filtered out here.
-        tokenList = filterBlankTokens(tokenList);
+        tokenList = ParserUtils.filterBlankTokens(tokenList);
 
         List<Compilable> parsedObjects = new ArrayList<>();
 

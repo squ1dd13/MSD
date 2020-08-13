@@ -35,12 +35,21 @@ public class Lexer {
     }
 
     private static Token readNumber(char first, CharacterReader reader) throws IOException {
-        final String numberLiteralChars = ".xf1234567890";
+        String numberLiteralChars = ".xf1234567890";
         StringBuilder builder = new StringBuilder().append(first);
 
         int c;
+        boolean foundX = false;
         while((c = reader.peek()) != -1 && numberLiteralChars.contains(String.valueOf((char)c))) {
-            builder.append((char)reader.read());
+            char character = (char)reader.read();
+            if(character == 'x') {
+                if(!foundX) {
+                    foundX = true;
+                    numberLiteralChars += "ABCDEF";
+                }
+            }
+
+            builder.append(character);
         }
 
         String stringValue = builder.toString();
@@ -68,6 +77,9 @@ public class Lexer {
                 .withFloat(floatValue);
         }
 
+        if(xCount > 0) {
+            stringValue = stringValue.substring(stringValue.indexOf('x') + 1);
+        }
         int intValue = Integer.parseInt(stringValue, xCount > 0 ? 16 : 10);
 
         return Token
@@ -92,10 +104,16 @@ public class Lexer {
                 return Token.withType(Token.TokenType.Newline);
 
             case '(':
-                return Token.withType(Token.TokenType.OpenBracket);
+                return Token.withType(Token.TokenType.OpenParen);
 
             case ')':
-                return Token.withType(Token.TokenType.CloseBracket);
+                return Token.withType(Token.TokenType.CloseParen);
+
+            case '[':
+                return Token.withType(Token.TokenType.OpenSquare);
+
+            case ']':
+                return Token.withType(Token.TokenType.CloseSquare);
 
             case ',':
                 return Token.withType(Token.TokenType.Comma);

@@ -27,7 +27,7 @@ public class ArithmeticConverter {
                 isUnary = true;
             } else if(i != 0) {
                 var prev = infix.get(i - 1);
-                isUnary = prev.is(TokenType.Operator) || prev.is(TokenType.OpenBracket);
+                isUnary = prev.is(TokenType.Operator) || prev.is(TokenType.OpenParen);
             }
 
             if(isUnary) {
@@ -62,9 +62,9 @@ public class ArithmeticConverter {
                 }
 
                 symbolStack.push(operatorIndex);
-            } else if(token.is(TokenType.OpenBracket)) {
+            } else if(token.is(TokenType.OpenParen)) {
                 symbolStack.push(-2);
-            } else if(token.is(TokenType.CloseBracket)) {
+            } else if(token.is(TokenType.CloseParen)) {
                 while(symbolStack.peek() != -2) {
                     String operator = operators.get(symbolStack.pop());
 

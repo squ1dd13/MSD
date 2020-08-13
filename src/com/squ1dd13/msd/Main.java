@@ -6,6 +6,7 @@ import com.squ1dd13.msd.compiler.text.parser.*;
 import com.squ1dd13.msd.decompiler.*;
 import com.squ1dd13.msd.decompiler.disassembler.*;
 import com.squ1dd13.msd.decompiler.high.*;
+import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.misc.gxt.*;
 import com.squ1dd13.msd.misc.img.*;
 import com.squ1dd13.msd.shared.*;
@@ -64,6 +65,7 @@ public class Main {
 
         GXT.mainGXT = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
 
+        ClassRegistry.loadClass("/Users/squ1dd13/Documents/MSD-Project/Character.msd");
         CommandRegistry.addPseudoCommands();
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
@@ -73,8 +75,29 @@ public class Main {
 //        script.print();
 
         HighLevelScript highLevelScript = new HighLevelScript(script);
+
+        var allClasses = ClassRegistry.allClasses();
+        for(ClassParser classParser : allClasses) {
+            classParser.addVariableNames(script.commands);
+        }
+
         highLevelScript.print();
+
+        ClassIdentifier characterIdentifier = new ClassIdentifier("Character",
+            new DataValue(AbstractType.GlobalIntFloat, 12),
+            new DataValue(AbstractType.GlobalIntFloat, 38160));
+
+        characterIdentifier.analyzeCommands(script.commands);
+        characterIdentifier.printClass();
+
+
+
+//        var classTokens = Lexer.lex(Files.readString(Paths.get("/Users/squ1dd13/Documents/MSD-Project/Character.msd")));
+//        classTokens = ParserUtils.filterBlankTokens(classTokens);
+//        ClassParser classParser = new ClassParser(classTokens.iterator());
 //
+
+
 //        compile(
 //            "/Users/squ1dd13/Documents/MSD-Project/shopper.msd",
 //            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
