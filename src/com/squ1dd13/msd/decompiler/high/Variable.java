@@ -33,7 +33,7 @@ public class Variable {
         return dv.intValue;
     }
 
-    public static Variable create(DataValue dataValue) {
+    public static Variable getOrCreate(DataValue dataValue) {
         int key = dataValueOffset(dataValue);
 
         if(variableMap.containsKey(key)) {

@@ -8,7 +8,7 @@ import java.util.*;
 public class ConditionalBlock implements CodeBlock {
     // Can improve output quality, but introduces lots of nesting.
     // Not recommended until nesting reduction features implemented.
-    public static final boolean addElseBlock = false;
+    public static final boolean addElseBlock = true;
 
     public boolean isAnd = false;
     public int conditionCount = 0;
@@ -67,7 +67,7 @@ public class ConditionalBlock implements CodeBlock {
         try {
             SingleCommand single = (SingleCommand)body.commands.get(body.commands.size() - 1);
             if(single.command.isJump() && single.command.jumpDest() == testCommand.offset) {
-                System.out.println("while");
+//                System.out.println("while");
 
                 body.commands.remove(body.commands.size() - 1);
                 maybeWhile = true;
@@ -83,9 +83,9 @@ public class ConditionalBlock implements CodeBlock {
                     elseJump = single.command;
                     int elseEnd = Math.abs(elseJump.arguments[0].intValue);
 
-                    System.out.println("jump 1: " + falseJump.offset + "\njump 2: " + elseJump.offset);
+//                    System.out.println("jump 1: " + falseJump.offset + "\njump 2: " + elseJump.offset);
 
-                    index++;
+//                    index++;
 
                     while(commands.get(index).offset < elseEnd) {
                         BlockFactory.FactoryOutput output = BlockFactory.createBlock(commands, index);

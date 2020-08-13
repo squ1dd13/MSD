@@ -10,7 +10,7 @@ public class DecompiledScript {
 
     public void print() {
         for(Command command : commands) {
-            System.out.println(command.formattedString());
+            System.out.println(command.offset + ": " + command.formattedString());
         }
     }
 }

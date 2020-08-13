@@ -84,6 +84,11 @@ public class Command {
     }
 
     public String formattedString() {
+        var operationString = VariableOperation.forCommand(this);
+        if(operationString != null) {
+            return operationString.toString();
+        }
+
         String mainPart = name.contains("(") ? name.substring(0, name.indexOf('(')) : name;
 
         List<String> argStrings = new ArrayList<>();

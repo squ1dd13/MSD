@@ -1,5 +1,7 @@
 package com.squ1dd13.msd.decompiler.high;
 
+import java.util.regex.*;
+
 import static com.squ1dd13.msd.decompiler.high.SyntaxHighlight.TextColor.*;
 
 public class SyntaxHighlight {
@@ -50,6 +52,7 @@ public class SyntaxHighlight {
         return line
             .replaceAll("(?<=(?:if\\()|(?:while\\()|(?:and)|(?:or))(\\s*\\?[^(]+)", LightYellow.highlight("$1"))
             .replaceAll("if\\(([^)]+)\\)", Pink.highlight("if") + "($1)")
+            .replaceAll("} else \\{", "} " + Pink.highlight("else") + " {")
             .replaceAll("while\\(([^)]+)\\)", Pink.highlight("while") + "($1)")
             .replaceAll("(&?local[^_]+_\\d+)", Orange.highlight("$1"))
             .replaceAll("(&?global[^_]+_\\d+)", Red.highlight("$1"))

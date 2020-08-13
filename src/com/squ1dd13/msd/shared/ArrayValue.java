@@ -65,6 +65,6 @@ public class ArrayValue {
             }
         }
 
-        return String.format("%s[%s]",createArrayName(), indexString);
+        return String.format("%s[%s]", createArrayName(), indexString);
     }
 }

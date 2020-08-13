@@ -32,7 +32,7 @@ public class HighLevelScript {
                 DataValue dataValue = arguments[i];
                 if(dataValue.type.isGlobal() || dataValue.type.isLocal()) {
 
-                    Variable.create(dataValue).registerUse(command, i);
+                    Variable.getOrCreate(dataValue).registerUse(command, i);
                 }
             }
         }

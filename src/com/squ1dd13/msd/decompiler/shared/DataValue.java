@@ -33,6 +33,14 @@ public class DataValue {
         }
     }
 
+    public static DataValue withString(String s) {
+        DataValue value = new DataValue();
+        value.type = AbstractType.Str;
+        value.stringValue = s;
+
+        return value;
+    }
+
     @Override
     public String toString() {
         if(Variable.isRegistered(this)) {
