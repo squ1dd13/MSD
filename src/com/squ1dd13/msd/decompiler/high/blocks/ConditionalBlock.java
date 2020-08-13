@@ -1,5 +1,6 @@
 package com.squ1dd13.msd.decompiler.high.blocks;
 
+import com.squ1dd13.msd.compiler.language.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
@@ -10,9 +11,9 @@ public class ConditionalBlock implements CodeBlock {
     // Not recommended until nesting reduction features implemented.
     public static final boolean addElseBlock = true;
 
-    public boolean isAnd = false;
-    public int conditionCount = 0;
-    public int consumed = 0;
+    public boolean isAnd;
+    public int conditionCount;
+    public int consumed;
 
     List<Command> conditions = new ArrayList<>();
     Command falseJump;
@@ -72,7 +73,8 @@ public class ConditionalBlock implements CodeBlock {
                 body.commands.remove(body.commands.size() - 1);
                 maybeWhile = true;
             }
-        } catch(Exception ignored) { }
+        } catch(Exception ignored) {
+        }
 
         if(addElseBlock) {
             try {
@@ -94,7 +96,8 @@ public class ConditionalBlock implements CodeBlock {
                         index += output.consumed;
                     }
                 }
-            } catch(Exception ignored) { }
+            } catch(Exception ignored) {
+            }
         }
 
         consumed = index - originalIndex;
@@ -124,11 +127,30 @@ public class ConditionalBlock implements CodeBlock {
         }
 
         if(maybeIfElse) {
-            lines.add("} else {");
+            if(elseBody.commands.get(0) instanceof ConditionalBlock) {
+                List<String> elseIfLines = new ArrayList<>();
 
-            for(CodeBlock bodyCommand : elseBody.commands) {
-                for(String line : bodyCommand.toLineStrings()) {
-                    lines.add("$i" + line);
+                for(CodeBlock bodyCommand : elseBody.commands) {
+                    elseIfLines.addAll(bodyCommand.toLineStrings());
+                }
+
+                lines.add("} else " + elseIfLines.get(0));
+
+                // Skip the first line and the last line.
+                // If we don't skip the last line, we get loads of closing
+                //  braces at the end.
+                for(int i = 1; i < elseIfLines.size() - 1; ++i) {
+                    lines.add(elseIfLines.get(i));
+                }
+
+                // FIXME: ConditionalBlock is nasty and hacky. It also prints the goto() at the end of elif bodies.
+            } else {
+                lines.add("} else {");
+
+                for(CodeBlock bodyCommand : elseBody.commands) {
+                    for(String line : bodyCommand.toLineStrings()) {
+                        lines.add("$i" + line);
+                    }
                 }
             }
         }

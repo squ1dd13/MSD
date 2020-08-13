@@ -11,7 +11,13 @@ public class ClassRegistry {
     private static final Map<String, ClassParser> parsedClasses = new HashMap<>();
     private static final Map<Integer, String> globalVariableClasses = new HashMap<>(Map.of(
         12, "Character",
-        38160, "Character"
+        38160, "Character",
+        9692, "Menu",
+        9684, "Menu",
+        9676, "Menu",
+        9668, "Menu",
+        8, "Player",
+        38096, "Vehicle"
     ));
 
     public static void loadClass(String classPath) throws IOException {
@@ -28,6 +34,16 @@ public class ClassRegistry {
         }
 
         parsedClasses.put(parser.name, parser);
+    }
+
+    public static void loadClasses(String dirPath) throws IOException {
+        Files.list(Paths.get(dirPath)).forEach(path -> {
+            try {
+                loadClass(path.toString());
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static Optional<ClassParser> getClass(String name) {

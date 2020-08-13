@@ -61,7 +61,8 @@ public class Main {
 
         GXT.mainGXT = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
 
-        ClassRegistry.loadClass("/Users/squ1dd13/Documents/MSD-Project/Character.msd");
+        // Load GTA: San Andreas classes.
+        ClassRegistry.loadClasses("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/SanAndreas");
         CommandRegistry.addPseudoCommands();
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
@@ -79,11 +80,15 @@ public class Main {
 
         highLevelScript.print();
 
-        ClassIdentifier menuIdentifier = new ClassIdentifier("Menu",
-            new DataValue(AbstractType.GlobalIntFloat, 9692));
+        ClassIdentifier menuIdentifier = new ClassIdentifier("Vehicle",
+            new DataValue(AbstractType.GlobalIntFloat, 38096));
 
         menuIdentifier.analyzeCommands(script.commands);
         menuIdentifier.printClass();
+
+        for(DataValue value : menuIdentifier.targetVars) {
+            System.out.println(value.intValue + " is Vehicle");
+        }
 
 //        var classTokens = Lexer.lex(Files.readString(Paths.get("/Users/squ1dd13/Documents/MSD-Project/Character.msd")));
 //        classTokens = ParserUtils.filterBlankTokens(classTokens);

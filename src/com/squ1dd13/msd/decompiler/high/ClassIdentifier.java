@@ -13,7 +13,7 @@ manually refined afterwards.
  */
 public class ClassIdentifier {
     private final String className;
-    private final List<DataValue> targetVars;
+    public final List<DataValue> targetVars;
     private final GeneratedClass generated;
 
     public ClassIdentifier(String name, DataValue... targets) {

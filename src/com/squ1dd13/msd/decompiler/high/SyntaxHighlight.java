@@ -51,17 +51,18 @@ public class SyntaxHighlight {
     public static String highlightLine(String line) {
         return line
             .replaceAll("(?<=(?:if\\()|(?:while\\()|(?:and)|(?:or))(\\s*\\?[^(]+)", LightYellow.highlight("$1"))
-            .replaceAll("(&?(?:(?:global)|(?:local))[^_]+_\\d+(?:_[A-Za-z_]+)?)\\.([^(]+)", "$1." + BlueGreen.highlight("$2"))
-            .replaceAll("if\\(([^)]+)\\)", Pink.highlight("if") + "($1)")
+            .replaceAll("(&?(?:(?:global)|(?:local))[^_]+_\\d+(?:_[A-Za-z_0-9]+)?)\\.([^(]+)", "$1." + BlueGreen.highlight("$2"))
+            .replaceAll("((?:else )?if)\\(([^)]+)\\)", Pink.highlight("$1") + "($2)")
             .replaceAll("} else \\{", "} " + Pink.highlight("else") + " {")
             .replaceAll("while\\(([^)]+)\\)", Pink.highlight("while") + "($1)")
-            .replaceAll("(&?local[^_]+_\\d+(?:_[A-Za-z_]+)?)", Orange.highlight("$1"))
-            .replaceAll("(&?global[^_]+_\\d+(?:_[A-Za-z_]+)?)", Red.highlight("$1"))
+            .replaceAll("(&?local[^_]+_\\d+(?:_[A-Za-z_0-9]+)?)", Orange.highlight("$1"))
+            .replaceAll("(&?global[^_]+_\\d+(?:_[A-Za-z_0-9]+)?)", Red.highlight("$1"))
             .replaceAll("(?<=(?:\\()|(?:, ))(-?[\\d.]+f?)", Green.highlight("$1"))
             .replaceAll("([^(]+)\\(", LightPink.highlight("$1") + "(")
             .replaceAll("\"(\\.|[^\"])*\"", MidBlue.highlight("$0"))
             .replaceAll("(\\s*)//([^\\n]*)", Gray.highlight("$1/*$2 */"))
             .replaceAll("([^\\s]+) (proc_[^(]+)", Blue.highlight("$1 ") + BlueGreen.highlight("$2"))
-            .replaceAll("void", Orange.highlight("$0"));
+            .replaceAll("void", Orange.highlight("$0"))
+            .replaceAll("[{}()]", LightBlue.highlight("$0"));
     }
 }
