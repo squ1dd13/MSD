@@ -16,11 +16,7 @@ import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
-// Nowhere better to put these...
-// TODO: Add comments with GXT contents (when GXT file is referenced).
 // TODO: Add support for main.scm
-// TODO: Add basic .img packing/unpacking capabilities for script.img. (Maybe decompile the whole thing.)
-// TODO: Use Optional<...> instead of random null returns (gonna take a while)
 
 public class Main {
     public static void compile(String inPath, String outPath) throws IOException {
@@ -83,14 +79,11 @@ public class Main {
 
         highLevelScript.print();
 
-        ClassIdentifier characterIdentifier = new ClassIdentifier("Character",
-            new DataValue(AbstractType.GlobalIntFloat, 12),
-            new DataValue(AbstractType.GlobalIntFloat, 38160));
+        ClassIdentifier menuIdentifier = new ClassIdentifier("Menu",
+            new DataValue(AbstractType.GlobalIntFloat, 9692));
 
-        characterIdentifier.analyzeCommands(script.commands);
-        characterIdentifier.printClass();
-
-
+        menuIdentifier.analyzeCommands(script.commands);
+        menuIdentifier.printClass();
 
 //        var classTokens = Lexer.lex(Files.readString(Paths.get("/Users/squ1dd13/Documents/MSD-Project/Character.msd")));
 //        classTokens = ParserUtils.filterBlankTokens(classTokens);
