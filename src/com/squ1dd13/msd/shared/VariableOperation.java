@@ -67,7 +67,8 @@ public class VariableOperation {
         V(Int, "=", Int, 0x6).withTypes(LocalIntFloat, Int),
         V(Int, ">=", Int, 0x2C).withTypes(GlobalIntFloat, GlobalIntFloat),
         V(Int, ">=", Int, 0x29).withTypes(LocalIntFloat, Int),
-        V(Flt, "==", Flt, 0x44).withTypes(GlobalIntFloat, GlobalIntFloat)
+        V(Flt, "==", Flt, 0x44).withTypes(GlobalIntFloat, GlobalIntFloat),
+        V(Int, "==", Int, 0x39).withTypes(LocalIntFloat, Int)
     );
 
     private static final HashMap<Integer, VariableOperation> operationsMap = new HashMap<>();
@@ -104,10 +105,6 @@ public class VariableOperation {
 
     @Override
     public String toString() {
-        if(left.type.isVariable() && !Variable.isRegistered(left)) {
-            return "first time";
-        }
-
         return String.format("%s %s %s", left, operatorString, right);
     }
 }

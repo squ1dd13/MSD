@@ -50,6 +50,7 @@ public class SyntaxHighlight {
 
     public static String highlightLine(String line) {
         return line
+            .replaceAll("([a-zA-Z_$][a-zA-Z\\d_$]*)\\.([a-zA-Z_$][a-zA-Z\\d_$]*)", MidBlue.highlight("$1") + "." + BlueGreen.highlight("$2"))
             .replaceAll("(?<=(?:if\\()|(?:while\\()|(?:and)|(?:or))(\\s*\\?[^(]+)", LightYellow.highlight("$1"))
             .replaceAll("(&?(?:(?:global)|(?:local))[^_]+_\\d+(?:_[A-Za-z_0-9]+)?)\\.([^(]+)", "$1." + BlueGreen.highlight("$2"))
             .replaceAll("((?:else )?if)\\(([^)]+)\\)", Pink.highlight("$1") + "($2)")

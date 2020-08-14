@@ -7,16 +7,23 @@ import com.squ1dd13.msd.shared.*;
 import java.util.*;
 
 public class ClassParser extends ObjectParser {
-    private final Map<Integer, MethodParser> parsedMethods = new HashMap<>();
+    public final Map<Integer, MethodParser> parsedMethods = new HashMap<>();
     public String name;
+    public boolean isStatic;
 
     public ClassParser(Iterator<Token> iterator) {
-        iterator.next();
+        var first = iterator.next();
+
+        if(first.getText().equals("static")) {
+            isStatic = true;
+            iterator.next();
+        }
+
         name = iterator.next().getText();
 
         var openBrace = iterator.next();
         if(openBrace.isNot(Token.TokenType.OpenBrace)) {
-            Util.emitFatalError("Class declarations should be written 'class XYZ { ... }'");
+            Util.emitFatalError("Class declarations should be written '(static) class XYZ { ... }'");
         }
 
         tokens = ParserUtils.readCurrentLevel(iterator, Token.TokenType.OpenBrace, Token.TokenType.CloseBrace);
@@ -32,19 +39,22 @@ public class ClassParser extends ObjectParser {
             }
 
             MethodParser method = parsedMethods.get(command.opcode);
-            if(method.parameters.size() != command.arguments.length - 1) {
+            if(method.parameters.size() != command.arguments.length - (isStatic ? 0 : 1)) {
                 continue;
             }
 
-            if(command.arguments[0].type.isVariable()) {
+            if(!isStatic && command.arguments[0].type.isVariable()) {
                 // Use the parameter to give the variable a more meaningful name.
                 var variable = Variable.getOrCreate(command.arguments[0]);
                 variable.customTypeName = name;
                 variable.setCustomName(null);
             }
 
-            for(int i = 1; i < command.arguments.length; ++i) {
-                String paramName = method.parameterNames.get(i - 1);
+            // Static classes don't have a hidden "this" parameter, so the arguments start at 0.
+            int i = isStatic ? 0 : 1;
+            for(; i < command.arguments.length; ++i) {
+                int realIndex = isStatic ? i : i - 1;
+                String paramName = method.parameterNames.get(realIndex);
 
                 if(command.arguments[i].type.isVariable()) {
                     // Use the parameter to give the variable a more meaningful name.
@@ -61,16 +71,18 @@ public class ClassParser extends ObjectParser {
         }
 
         MethodParser method = parsedMethods.get(command.opcode);
-        if(method.parameters.size() != command.arguments.length - 1) {
+        if(method.parameters.size() != command.arguments.length - (isStatic ? 0 : 1)) {
             Util.emitFatalError("Incorrect argument count for method call");
         }
 
-        String receiverString = command.arguments[0].toString();
+        String receiverString = isStatic ? name : command.arguments[0].toString();
         StringBuilder callBuilder = new StringBuilder(receiverString).append('.').append(method.name).append('(');
 
-        // Skip the first argument because that's the receiver.
-        for(int i = 1; i < command.arguments.length; ++i) {
-            String paramName = method.parameterNames.get(i - 1);
+        // The first argument is the receiver unless this is a static class.
+        int i = isStatic ? 0 : 1;
+        for(; i < command.arguments.length; ++i) {
+            int realIndex = isStatic ? i : i - 1;
+            String paramName = method.parameterNames.get(realIndex);
             callBuilder.append(paramName).append(": ").append(command.argumentString(i));
 
             if(i != command.arguments.length - 1) {

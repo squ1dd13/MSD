@@ -1,6 +1,7 @@
 package com.squ1dd13.msd.shared;
 
 import com.squ1dd13.msd.compiler.text.parser.*;
+import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.decompiler.shared.*;
 
 import java.io.*;
@@ -100,8 +101,15 @@ public class Command {
 
     public String formattedString() {
         if(arguments.length > 0) {
-            if(arguments[0].type.isGlobal()) {
-                var className = ClassRegistry.getClassNameForGlobal(arguments[0].intValue);
+            if(arguments[0].type.isVariable() || arguments[0].type.isArray()) {
+                Optional<String> className;
+
+                if(arguments[0].type.isGlobal()) {
+                    className = ClassRegistry.getClassNameForGlobal(arguments[0].intValue);
+                } else {
+                    className = Optional.ofNullable(HighLevelScript.currentLocalClassMap.get(arguments[0].intValue));
+                }
+
                 if(className.isPresent()) {
                     Optional<ClassParser> classObject = ClassRegistry.getClass(className.get());
 
@@ -110,6 +118,12 @@ public class Command {
                         if(callStr != null) return callStr;
                     }
                 }
+            }
+
+            var classOptional = ClassRegistry.classForCommand(this).flatMap(ClassRegistry::getClass);
+
+            if(classOptional.isPresent()) {
+                return classOptional.get().createCallString(this);
             }
         }
 

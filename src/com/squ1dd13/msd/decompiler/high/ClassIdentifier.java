@@ -20,6 +20,11 @@ public class ClassIdentifier {
         className = name;
         targetVars = new ArrayList<>(Arrays.asList(targets));
         generated = new GeneratedClass(name);
+
+        // If a class exists with the given name, add all of its existing methods.
+        ClassRegistry.getClass(name).ifPresent(classParser -> {
+            generated.methodOpcodes.addAll(classParser.parsedMethods.keySet());
+        });
     }
 
     public void analyzeCommands(List<Command> commands) {
@@ -109,7 +114,6 @@ public class ClassIdentifier {
             return camelCaseBuilder.toString();
         }
 
-        // TODO: Output generated classes in compilable format.
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder("class " + name + " {\n");

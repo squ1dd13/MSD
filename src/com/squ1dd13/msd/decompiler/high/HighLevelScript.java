@@ -10,10 +10,14 @@ import java.util.*;
 // A script that contains blocks of code rather than a basic sequence of commands.
 public class HighLevelScript {
     public GenericCodeBlock commandBlock = new GenericCodeBlock();
+    public static Map<Integer, String> currentLocalClassMap = new HashMap<>();
 
     public HighLevelScript(DecompiledScript decompiledScript) {
         List<Command> commands = decompiledScript.commands;//compactJumps(lowScript.commands);
         findVariables(commands);
+
+        currentLocalClassMap = ClassRegistry.generateLocalClassMap(commands);
+
         BlockFactory.calledAddresses = calledOffsets(commands);
 
         for(int i = 0; i < commands.size();) {

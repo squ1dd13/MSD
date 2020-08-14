@@ -1,4 +1,7 @@
 class Character {
+    [0x1C2]
+    void release();
+
     [0x8C7]
     void setIndividualPosition(GlobalIntFloat x, GlobalIntFloat y, GlobalIntFloat z);
 
@@ -82,4 +85,7 @@ class Character {
 
     [0x449]
     bool sittingInVehicle();
+
+    [0x4C8]
+    bool isInAircraft();
 }

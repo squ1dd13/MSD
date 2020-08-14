@@ -16,4 +16,7 @@ class Player {
 
     [0x945]
     void getMaxArmor(GlobalIntFloat armorLevel);
+
+    [0x10F]
+    bool isWantedLevelGreaterThan(Int level);
 }

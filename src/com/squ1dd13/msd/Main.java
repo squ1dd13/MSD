@@ -46,7 +46,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        System.out.println("MSD v1.0 Beta");
+        System.out.println("MSD v1.0");
 
         String registryPath = "/Users/squ1dd13/Documents/MSD-Project/commands.msdreg";
         if(Files.exists(Paths.get(registryPath))) {
@@ -67,7 +67,7 @@ public class Main {
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
 
-        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/ammu.scm");
+        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/debt.scm");
         DecompiledScript script = scm.toScript();
 //        script.print();
 
@@ -80,14 +80,14 @@ public class Main {
 
         highLevelScript.print();
 
-        ClassIdentifier menuIdentifier = new ClassIdentifier("Vehicle",
-            new DataValue(AbstractType.GlobalIntFloat, 38096));
+        ClassIdentifier menuIdentifier = new ClassIdentifier("Player",
+            new DataValue(AbstractType.GlobalIntFloat, 8));
 
         menuIdentifier.analyzeCommands(script.commands);
         menuIdentifier.printClass();
 
         for(DataValue value : menuIdentifier.targetVars) {
-            System.out.println(value.intValue + " is Vehicle");
+            System.out.println(value.intValue + " is Player");
         }
 
 //        var classTokens = Lexer.lex(Files.readString(Paths.get("/Users/squ1dd13/Documents/MSD-Project/Character.msd")));
