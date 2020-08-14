@@ -127,7 +127,7 @@ public class ConditionalBlock implements CodeBlock {
         }
 
         if(maybeIfElse) {
-            if(elseBody.commands.get(0) instanceof ConditionalBlock) {
+            if(!elseBody.commands.isEmpty() && elseBody.commands.get(0) instanceof ConditionalBlock) {
                 List<String> elseIfLines = new ArrayList<>();
 
                 for(CodeBlock bodyCommand : elseBody.commands) {

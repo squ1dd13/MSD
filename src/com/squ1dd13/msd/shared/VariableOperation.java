@@ -68,7 +68,12 @@ public class VariableOperation {
         V(Int, ">=", Int, 0x2C).withTypes(GlobalIntFloat, GlobalIntFloat),
         V(Int, ">=", Int, 0x29).withTypes(LocalIntFloat, Int),
         V(Flt, "==", Flt, 0x44).withTypes(GlobalIntFloat, GlobalIntFloat),
-        V(Int, "==", Int, 0x39).withTypes(LocalIntFloat, Int)
+        V(Int, "==", Int, 0x39).withTypes(LocalIntFloat, Int),
+        V(Int, "==", Int, 0x4A4).withTypes(LocalIntFloat, Int),
+        V(Int, "+=", Int, 0xA).withTypes(LocalIntFloat, Int),
+        V(Int, ">", Int, 0x19).withTypes(LocalIntFloat, Int),
+        V(Int, "=", Int, 0x85).withTypes(LocalIntFloat, LocalIntFloat),
+        V(Flt, "-", Flt, 0xD).withTypes(GlobalIntFloat, Flt)
     );
 
     private static final HashMap<Integer, VariableOperation> operationsMap = new HashMap<>();
@@ -101,6 +106,15 @@ public class VariableOperation {
         }
 
         return copy;
+    }
+
+    public List<String> combineWith(VariableOperation other) {
+        if(operatorString.equals("=") && other.operatorString.equals("+=") && left.equalsVariable(other.left)) {
+            final String assignAddedFormat = "%s = %s + %s";
+            return List.of(String.format(assignAddedFormat, left, right, other.right));
+        }
+
+        return List.of(toString(), other.toString());
     }
 
     @Override

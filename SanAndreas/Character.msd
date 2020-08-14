@@ -1,4 +1,7 @@
 class Character {
+    [0x9A]
+    static void create(Int type, Int modelNo, Flt x, Flt y, Flt z, GlobalIntFloat characterOut);
+
     [0x1C2]
     void release();
 
@@ -19,7 +22,10 @@ class Character {
     
     [0x812]
     void playFullAnimation(Str animName, Str animFile, Flt frameDelta, Bool loop, Bool lockX, Bool lockY, Bool lockF, Int time);
-    
+
+    [0x605]
+    void playAnimation(Str animName, Str animFile, Flt frameDelta, Bool loop, Bool lockX, Bool lockY, Bool lockF, Int time);
+
     [0x792]
     void forceClearTasks();
 
@@ -99,4 +105,14 @@ class Character {
 
     [0x226]
     void getHealth(GlobalIntFloat healthOut);
+
+    [0x62E]
+    // Returns 7 if the character doesn't have the task.
+    void getTaskStatus(Int taskID, GlobalIntFloat taskStatus);
+
+    [0x9C5]
+    bool isUsingMapAttractor();
+
+    [0x51A]
+    bool hasBeenDamagedByCharacter(GlobalIntFloat other);
 }

@@ -6,6 +6,7 @@ import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
 
+// TODO: Un-staticfy BlockFactory.
 public class BlockFactory {
     public static Set<Integer> calledAddresses = new HashSet<>();
     private static boolean notInLabel = true;
@@ -106,6 +107,17 @@ public class BlockFactory {
             if(conditionalBlock.consumed != 0) {
                 return new FactoryOutput(conditionalBlock, conditionalBlock.consumed);
             }
+        }
+
+        List<Command> operationCommands = new ArrayList<>();
+
+        int opIndex = index;
+        while(VariableOperation.forCommand(commands.get(opIndex)) != null) {
+            operationCommands.add(commands.get(opIndex++));
+        }
+
+        if(operationCommands.size() > 1) {
+            return new FactoryOutput(new ArithmeticBlock(operationCommands), operationCommands.size());
         }
 
         return new FactoryOutput(new SingleCommand(command), 1);

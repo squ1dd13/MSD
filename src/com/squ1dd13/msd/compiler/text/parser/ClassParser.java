@@ -135,7 +135,7 @@ public class ClassParser extends ObjectParser {
                 String paramName = parameterNames.get(realIndex);
                 String argumentString = command.argumentString(i);
 
-                if(booleanIndices.contains(i)) {
+                if(booleanIndices.contains(realIndex)) {
                     int integer = command.arguments[i].intValue;
 
                     if(integer == 0) {

@@ -90,6 +90,6 @@ public class DataValue {
             return arrayValue.toCodeString();
         }
 
-        return "<unknown>";
+        return "<unknown " + intValue + ">";
     }
 }

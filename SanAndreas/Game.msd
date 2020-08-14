@@ -5,12 +5,6 @@ static class Game {
     [0x3D3]
     void getClosestVehicleNodePositionAndAngle(Flt x, Flt y, Flt z, GlobalIntFloat nodeX, GlobalIntFloat nodeY, GlobalIntFloat nodeZ, GlobalIntFloat nodeAngle);
 
-    [0x3E6]
-    void clearPrint();
-
-    [0x512]
-    void printIndefinitely(Str gxtKey);
-
     [0x4E]
     void endCurrentScript();
 
@@ -19,4 +13,7 @@ static class Game {
 
     [0x111]
     void setCanGameOver(Bool canIt);
+
+    [0x7B0]
+    void getCurrentShop(GlobalStr shopName);
 }

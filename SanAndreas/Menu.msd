@@ -1,4 +1,7 @@
 class Menu {
+    [0x8D4]
+    static void create(Str name, Flt screenX, Flt screenY, Flt width, Int columns, Bool interactive, Bool background, Int alignment, GlobalIntFloat menuOut);
+
     [0x8D6]
     void setColumnOrientation(Int a, Int b);
 

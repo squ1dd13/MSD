@@ -7,14 +7,70 @@ import com.squ1dd13.msd.shared.*;
 import java.util.*;
 
 public class ReversedCommand {
+    public int opcode;
+    public List<ReversedArgument> reversedArguments = new ArrayList<>();
+    public int length;
+    public int offset;
+    public int originalOpcode;
+    public ReversedCommand(int[] bytes) {
+        originalOpcode = opcode = bytes[0] | bytes[1] << 8;
+
+        if(opcode == 0) {
+            opcode = Integer.MAX_VALUE;
+            return;
+        }
+
+        Command cmd = Command.commands.getOrDefault(opcode, null);
+        if(cmd == null) {
+            if((cmd = Command.commands.getOrDefault(opcode & 0xFFF, null)) == null) {
+                Util.emitFatalError("Unknown opcode " + Integer.toHexString(opcode));
+                return;
+            }
+
+            opcode &= 0xFFF;
+        }
+
+//        System.out.print(cmd.name);
+
+        int numArgs = (int)(cmd.name.chars().filter(c -> c == ',').count() + 1);
+        if(cmd.name.lastIndexOf('(') == cmd.name.lastIndexOf(')') - 1) numArgs = 0;
+
+        List<Integer> byteList = Util.intArrayToList(bytes);
+
+        int byteIndex = 2;
+        for(int i = 0; i < numArgs; ++i) {
+            int[] nextBytes = Util.intListToArray(
+                byteList.subList(byteIndex, byteList.size())
+            );
+
+            var arg = new ReversedArgument(nextBytes);
+            arg.toDataValue();
+            reversedArguments.add(arg);
+
+            byteIndex += arg.length;
+        }
+
+//        System.out.println();
+
+        length = byteIndex;
+    }
+
+    public Command toCommand() {
+        Command base = Command.commands.get(opcode).copy();
+        base.arguments = new DataValue[reversedArguments.size()];
+        base.offset = offset;
+
+        for(int i = 0; i < reversedArguments.size(); ++i) {
+            base.arguments[i] = reversedArguments.get(i).toDataValue();
+        }
+
+        return base;
+    }
+
     public static class ReversedArgument {
         public int typeCode;
         public int[] valueBytes;
         public int length;
-
-        public LowLevelType lowLevelType() {
-            return LowLevelType.decode(typeCode);
-        }
 
         public ReversedArgument(int[] bytes) {
             typeCode = bytes[0];
@@ -25,6 +81,10 @@ public class ReversedCommand {
 
             valueBytes = new int[bytes.length - 1];
             System.arraycopy(bytes, 1, valueBytes, 0, bytes.length - 1);
+        }
+
+        public LowLevelType lowLevelType() {
+            return LowLevelType.decode(typeCode);
         }
 
         public DataValue toDataValue() {
@@ -69,61 +129,5 @@ public class ReversedCommand {
 
             return value;
         }
-    }
-
-    public int opcode;
-    public List<ReversedArgument> reversedArguments = new ArrayList<>();
-    public int length;
-    public int offset;
-    public int originalOpcode;
-
-    public ReversedCommand(int[] bytes) {
-        originalOpcode = opcode = bytes[0] | bytes[1] << 8;
-
-        if(opcode == 0) {
-            opcode = Integer.MAX_VALUE;
-            return;
-        }
-
-        Command cmd = Command.commands.getOrDefault(opcode, null);
-        if(cmd == null) {
-            if((cmd = Command.commands.getOrDefault(opcode & 0xFFF, null)) == null) {
-                System.out.println("Unknown opcode " + Integer.toHexString(opcode));
-                return;
-            }
-
-            opcode &= 0xFFF;
-        }
-
-        int numArgs = (int)(cmd.name.chars().filter(c -> c == ',').count() + 1);
-        if(cmd.name.lastIndexOf('(') == cmd.name.lastIndexOf(')') - 1) numArgs = 0;
-
-        List<Integer> byteList = Util.intArrayToList(bytes);
-
-        int byteIndex = 2;
-        for(int i = 0; i < numArgs; ++i) {
-            int[] nextBytes = Util.intListToArray(
-                byteList.subList(byteIndex, byteList.size())
-            );
-
-            var arg = new ReversedArgument(nextBytes);
-            arg.toDataValue();
-            reversedArguments.add(arg);
-            byteIndex += arg.length;
-        }
-
-        length = byteIndex;
-    }
-
-    public Command toCommand() {
-        Command base = Command.commands.get(opcode).copy();
-        base.arguments = new DataValue[reversedArguments.size()];
-        base.offset = offset;
-
-        for(int i = 0; i < reversedArguments.size(); ++i) {
-            base.arguments[i] = reversedArguments.get(i).toDataValue();
-        }
-
-        return base;
     }
 }

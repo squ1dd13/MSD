@@ -19,4 +19,7 @@ class Object {
 
     [0x1C4]
     void release();
+
+    [0x108]
+    void delete();
 }

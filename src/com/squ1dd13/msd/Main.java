@@ -67,7 +67,7 @@ public class Main {
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
 
-        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/coplook.scm");
+        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/shopper.scm");
         DecompiledScript script = scm.toScript();
 //        script.print();
 
@@ -78,7 +78,7 @@ public class Main {
             classParser.addVariableNames(script.commands);
         }
 
-        highLevelScript.print();
+//        highLevelScript.print();
 
         ClassIdentifier menuIdentifier = new ClassIdentifier("Object",
             new DataValue(AbstractType.LocalIntFloat, 0));
@@ -96,13 +96,13 @@ public class Main {
 //
 
 
-//        compile(
-//            "/Users/squ1dd13/Documents/MSD-Project/shopper.msd",
-//            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
-//        );
+        compile(
+            "/Users/squ1dd13/Documents/MSD-Project/shopper.msd",
+            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
+        );
 //
-//        highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
-//        highLevelScript.print();
+        highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
+        highLevelScript.print();
 //
 //        byte[] scmBytes = Files.readAllBytes(Paths.get("/Users/squ1dd13/Documents/MSD-Project/compiled.scm"));
 
@@ -113,7 +113,7 @@ public class Main {
 //            }
 //        );
 
-        System.out.println("Saving registry...");
+//        System.out.println("Saving registry...");
         CommandRegistry.save(registryPath);
     }
 }
