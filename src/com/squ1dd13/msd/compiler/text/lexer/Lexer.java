@@ -1,5 +1,6 @@
 package com.squ1dd13.msd.compiler.text.lexer;
 
+import com.squ1dd13.msd.compiler.text.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
@@ -169,9 +170,10 @@ public class Lexer {
 
     public static List<Token> lex(String str) {
         try {
+            String cleanString = Preprocessor.preprocess(str);
             List<Token> tokens = new ArrayList<>();
 
-            CharacterReader reader = new CharacterReader(new StringReader(str));
+            CharacterReader reader = new CharacterReader(new StringReader(cleanString));
 
             Token t;
             while((t = readNext(reader)) != null) {

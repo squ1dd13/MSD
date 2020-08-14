@@ -19,4 +19,7 @@ class Player {
 
     [0x10F]
     bool isWantedLevelGreaterThan(Int level);
+
+    [0x7CC]
+    void setEnterCarButtonEnabled(Bool canUse);
 }

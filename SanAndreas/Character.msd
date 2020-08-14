@@ -81,6 +81,8 @@ class Character {
     bool isInModel(Int modelNo);
 
     [0x3C0]
+    // "Weak" - the game still has control over the vehicle.
+    //  This means that the vehicle can be deleted.
     void getVehicleWeak(GlobalIntFloat vehicleHandle);
 
     [0x449]
@@ -88,4 +90,13 @@ class Character {
 
     [0x4C8]
     bool isInAircraft();
+
+    [0x687]
+    void stopAllTasks();
+
+    [0x223]
+    void setHealth(Int health);
+
+    [0x226]
+    void getHealth(GlobalIntFloat healthOut);
 }

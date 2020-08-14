@@ -67,7 +67,7 @@ public class Main {
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
 
-        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/debt.scm");
+        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/coplook.scm");
         DecompiledScript script = scm.toScript();
 //        script.print();
 
@@ -80,15 +80,15 @@ public class Main {
 
         highLevelScript.print();
 
-        ClassIdentifier menuIdentifier = new ClassIdentifier("Player",
-            new DataValue(AbstractType.GlobalIntFloat, 8));
+        ClassIdentifier menuIdentifier = new ClassIdentifier("Object",
+            new DataValue(AbstractType.LocalIntFloat, 0));
 
         menuIdentifier.analyzeCommands(script.commands);
-        menuIdentifier.printClass();
+//        menuIdentifier.printClass();
 
-        for(DataValue value : menuIdentifier.targetVars) {
-            System.out.println(value.intValue + " is Player");
-        }
+//        for(DataValue value : menuIdentifier.targetVars) {
+//            System.out.println(value.intValue + " is Object");
+//        }
 
 //        var classTokens = Lexer.lex(Files.readString(Paths.get("/Users/squ1dd13/Documents/MSD-Project/Character.msd")));
 //        classTokens = ParserUtils.filterBlankTokens(classTokens);

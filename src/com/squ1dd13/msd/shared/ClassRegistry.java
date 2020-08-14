@@ -64,7 +64,7 @@ public class ClassRegistry {
         for(Command command : commands) {
             var commandClass = classForCommand(command);
 
-            if(commandClass.isPresent()) {
+            if(commandClass.isPresent() && command.arguments.length > 0) {
                 classMap.put(command.arguments[0].intValue, commandClass.get());
             }
         }

@@ -100,31 +100,10 @@ public class Command {
     }
 
     public String formattedString() {
-        if(arguments.length > 0) {
-            if(arguments[0].type.isVariable() || arguments[0].type.isArray()) {
-                Optional<String> className;
+        var classOptional = ClassRegistry.classForCommand(this).flatMap(ClassRegistry::getClass);
 
-                if(arguments[0].type.isGlobal()) {
-                    className = ClassRegistry.getClassNameForGlobal(arguments[0].intValue);
-                } else {
-                    className = Optional.ofNullable(HighLevelScript.currentLocalClassMap.get(arguments[0].intValue));
-                }
-
-                if(className.isPresent()) {
-                    Optional<ClassParser> classObject = ClassRegistry.getClass(className.get());
-
-                    if(classObject.isPresent()) {
-                        var callStr = classObject.get().createCallString(this);
-                        if(callStr != null) return callStr;
-                    }
-                }
-            }
-
-            var classOptional = ClassRegistry.classForCommand(this).flatMap(ClassRegistry::getClass);
-
-            if(classOptional.isPresent()) {
-                return classOptional.get().createCallString(this);
-            }
+        if(classOptional.isPresent()) {
+            return classOptional.get().createCallString(this);
         }
 
         var operationString = VariableOperation.forCommand(this);
