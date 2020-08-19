@@ -8,7 +8,7 @@ import java.nio.file.*;
 import java.util.*;
 
 public class ClassRegistry {
-    private static final Map<String, ClassParser> parsedClasses = new HashMap<>();
+    private static final Map<String, ParsedClass> parsedClasses = new HashMap<>();
     private static final Map<Integer, String> globalVariableClasses = new HashMap<>(Map.of(
         12, "Character",
         38160, "Character",
@@ -24,7 +24,7 @@ public class ClassRegistry {
     public static void loadClass(String classPath) throws IOException {
         var tokens = ParserUtils.filterBlankTokens(Lexer.lex(Files.readString(Paths.get(classPath))));
 
-        ClassParser parser = new ClassParser(tokens.iterator());
+        ParsedClass parser = new ParsedClass(tokens.iterator());
         if(parsedClasses.containsKey(parser.name)) {
             // TODO: Implement extension classes.
 //            Util.emitFatalError(
@@ -72,7 +72,7 @@ public class ClassRegistry {
         return classMap;
     }
 
-    public static Optional<ClassParser> getClass(String name) {
+    public static Optional<ParsedClass> getClass(String name) {
         return parsedClasses.containsKey(name) ? Optional.of(parsedClasses.get(name)) : Optional.empty();
     }
 
@@ -84,7 +84,7 @@ public class ClassRegistry {
         return Optional.empty();
     }
 
-    public static Collection<ClassParser> allClasses() {
+    public static Collection<ParsedClass> allClasses() {
         return parsedClasses.values();
     }
 }

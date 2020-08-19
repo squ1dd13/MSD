@@ -3,23 +3,17 @@ package com.squ1dd13.msd.compiler.text.parser;
 import com.squ1dd13.msd.compiler.text.lexer.*;
 import com.squ1dd13.msd.shared.*;
 
-import java.io.*;
 import java.util.*;
 
 // using abc = xyz;
 // global meaningfulName = 12345;
-// A 'using' statement (also 'global') allows meaningful names
+// A 'using' statement (also 'global' or 'local') allows meaningful names
 //  to be given to variables or variable locations.
 public class UsingStatement implements IdentifierChanger {
-    // Using/global statements are very simple: if we're given an
+    // Using statements are very simple: if we're given an
     //  identifier that is the same as 'input', we change it to 'output'.
     private final String input;
-    private final Token output;
-
-    public UsingStatement(String input, Token output) {
-        this.input = input;
-        this.output = output;
-    }
+    private final TypedToken output;
 
     public UsingStatement(List<Token> statementTokens) {
         final Set<String> forbiddenKeywords = Set.of(
@@ -33,39 +27,49 @@ public class UsingStatement implements IdentifierChanger {
         Token keywordToken = statementTokens.get(0);
         String statementType = keywordToken.getText();
 
-        boolean isGlobalStatement = statementType.equals("global");
+        boolean isLocalOrGlobalStatement = statementType.equals("global") || statementType.equals("local");
         final String syntaxErrorString =
             String.format(
-                "'%s' statements must be in the format: '%s abc = xyz'",
+                "'%s' statements must be in the format: '%s Type abc = xyz'",
                 statementType,
                 statementType
             );
 
-        Token inputIdentifierToken = statementTokens.get(1);
+        Token typeToken = statementTokens.get(1);
+        ObjectType type = new ObjectType(typeToken);
+
+        if(type.isNull()) {
+            Util.emitFatalError("Unknown type '" + typeToken.getText() + "'");
+        }
+
+        Token inputIdentifierToken = statementTokens.get(2);
+
         if(forbiddenKeywords.contains(inputIdentifierToken.getText())) {
             Util.emitFatalError(String.format("'%s' statements may not change the meaning of keywords", statementType));
         }
 
-        Token equalsToken = statementTokens.get(2);
+        Token equalsToken = statementTokens.get(3);
         if(equalsToken.isNot(Token.TokenType.Equals)) {
             Util.emitFatalError(syntaxErrorString);
         }
 
         input = inputIdentifierToken.getText();
 
-        if(isGlobalStatement) {
-            // 'global' statements use offsets ("global blah = 123"),
-            //  so we need to turn the offset into a valid identifier.
-            output = Token
+        if(isLocalOrGlobalStatement) {
+            // Local and global statements use offsets ("global blah = 123"),
+            //  so we need to turn those offsets into valid identifiers.
+            Token outputToken = Token
                 .withType(Token.TokenType.IdentifierOrKeyword)
-                .withText("globalThing_" + statementTokens.get(3).getInteger());
+                .withText(statementType + "Thing_" + statementTokens.get(4).getInteger());
+
+            output = new TypedToken(outputToken, type);
         } else {
-            output = statementTokens.get(3);
+            output = new TypedToken(statementTokens.get(4), type);
         }
     }
 
     @Override
-    public Token modifyIdentifier(Token identifier) {
-        return identifier.getText().equals(input) ? output : identifier;
+    public TypedToken modifyIdentifier(Token identifier) {
+        return identifier.getText().equals(input) ? output : TypedToken.wrap(identifier);
     }
 }

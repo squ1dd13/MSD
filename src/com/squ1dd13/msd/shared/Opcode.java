@@ -12,6 +12,7 @@ public enum Opcode {
     Jump(0x2),
 
     JumpIfFalse(0x4D),
+    Call(0x50),
     If(0xD6);
 
     private final int num;

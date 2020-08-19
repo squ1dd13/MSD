@@ -8,11 +8,10 @@ import com.squ1dd13.msd.decompiler.disassembler.*;
 import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.misc.gxt.*;
-import com.squ1dd13.msd.misc.img.*;
 import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.unified.*;
 
 import java.io.*;
-import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -67,23 +66,30 @@ public class Main {
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
 
-        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/shopper.scm");
+        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/ammu.scm");
+        SCM scm1 = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
+        SCM scm2 = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/shopper.scm");
         DecompiledScript script = scm.toScript();
+        script = scm1.toScript();
+        script = scm2.toScript();
 //        script.print();
 
-        HighLevelScript highLevelScript = new HighLevelScript(script);
+        Script newScript = new Script("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/carmod1.scm");
+        newScript.print();
 
-        var allClasses = ClassRegistry.allClasses();
-        for(ClassParser classParser : allClasses) {
-            classParser.addVariableNames(script.commands);
-        }
-
+//        HighLevelScript highLevelScript = new HighLevelScript(script);
+//
+//        var allClasses = ClassRegistry.allClasses();
+//        for(ParsedClass parsedClass : allClasses) {
+//            parsedClass.addVariableNames(script.commands);
+//        }
+//
 //        highLevelScript.print();
-
-        ClassIdentifier menuIdentifier = new ClassIdentifier("Object",
-            new DataValue(AbstractType.LocalIntFloat, 0));
-
-        menuIdentifier.analyzeCommands(script.commands);
+//
+//        ClassIdentifier menuIdentifier = new ClassIdentifier("Object",
+//            new DataValue(AbstractType.LocalIntFloat, 0));
+//
+//        menuIdentifier.analyzeCommands(script.commands);
 //        menuIdentifier.printClass();
 
 //        for(DataValue value : menuIdentifier.targetVars) {
@@ -96,13 +102,13 @@ public class Main {
 //
 
 
-        compile(
-            "/Users/squ1dd13/Documents/MSD-Project/shopper.msd",
-            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
-        );
+//        compile(
+//            "/Users/squ1dd13/Documents/MSD-Project/shopper.msd",
+//            "/Users/squ1dd13/Documents/MSD-Project/compiled.scm"
+//        );
 //
-        highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
-        highLevelScript.print();
+//        highLevelScript = new HighLevelScript(new SCM("/Users/squ1dd13/Documents/MSD-Project/compiled.scm").toScript());
+//        highLevelScript.print();
 //
 //        byte[] scmBytes = Files.readAllBytes(Paths.get("/Users/squ1dd13/Documents/MSD-Project/compiled.scm"));
 

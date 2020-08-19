@@ -1,6 +1,7 @@
 package com.squ1dd13.msd.shared;
 
 import com.squ1dd13.msd.decompiler.disassembler.*;
+import com.squ1dd13.msd.decompiler.high.*;
 
 import java.io.*;
 import java.util.*;
@@ -11,10 +12,10 @@ import java.util.stream.*;
 public class CommandRegistry implements Serializable {
     public static class CommandEntry implements Serializable {
         public static class ParameterType implements Serializable {
-            public LowLevelType lowLevel;
+            public ConcreteType lowLevel;
             public AbstractType highLevel, absolute;
 
-            public LowLevelType getLowLevel() {
+            public ConcreteType getLowLevel() {
                 return lowLevel;
             }
 
@@ -26,13 +27,13 @@ public class CommandRegistry implements Serializable {
                 return absolute;
             }
 
-            public ParameterType(LowLevelType lowLevelType, AbstractType absolute) {
-                lowLevel = lowLevelType;
-                highLevel = lowLevelType.highLevelType();
-                this.absolute = lowLevelType.highLevelType();
+            public ParameterType(ConcreteType concreteType, AbstractType absolute) {
+                lowLevel = concreteType;
+                highLevel = concreteType.highLevelType();
+                this.absolute = concreteType.highLevelType();
             }
 
-            public ParameterType(LowLevelType llt) {
+            public ParameterType(ConcreteType llt) {
                 lowLevel = llt;
                 highLevel = llt.highLevelType();
             }
@@ -55,7 +56,7 @@ public class CommandRegistry implements Serializable {
         public String name;
         public List<ParameterType> parameterTypes = new ArrayList<>();
 
-        public List<LowLevelType> lowLevelParameters() {
+        public List<ConcreteType> concreteParamTypes() {
             return parameterTypes.stream().map(ParameterType::getLowLevel).collect(Collectors.toList());
         }
 
@@ -74,6 +75,14 @@ public class CommandRegistry implements Serializable {
         public CommandEntry(Command command) {
             opcode = command.opcode;
             name = command.name.substring(0, command.name.indexOf('('));
+
+            if(command.name.indexOf(')') - command.name.indexOf('(') != 1) {
+                int argumentCount = Math.max(1, Util.countOccurrences(command.name, ',') + 1);
+
+                for(int i = 0; i < argumentCount; ++i) {
+                    parameterTypes.add(new ParameterType(ConcreteType.Unknown));
+                }
+            }
         }
 
         // Adds information from a ReversedCommand (a disassembled command).
@@ -129,6 +138,11 @@ public class CommandRegistry implements Serializable {
         stream.close();
     }
 
+    public static Optional<CommandEntry> getOptional(int opcode) {
+        var entry = shared.commandEntries.getOrDefault(opcode, null);
+        return Optional.ofNullable(entry);
+    }
+
     public static CommandEntry get(int opcode) {
         var r = shared.commandEntries.getOrDefault(opcode, null);
         if(r == null) {
@@ -163,8 +177,8 @@ public class CommandRegistry implements Serializable {
         var unconditionalEntry =
             addCommand(new Command(Opcode.RelativeUnconditionalJump.get(), "relative_jump_unconditional()"));
 
-        conditionalEntry.parameterTypes.add(new CommandEntry.ParameterType(LowLevelType.S32));
-        unconditionalEntry.parameterTypes.add(new CommandEntry.ParameterType(LowLevelType.S32));
+        conditionalEntry.parameterTypes.add(new CommandEntry.ParameterType(ConcreteType.S32));
+        unconditionalEntry.parameterTypes.add(new CommandEntry.ParameterType(ConcreteType.S32));
     }
 
     public static boolean contains(int opcode) {
@@ -181,5 +195,9 @@ public class CommandRegistry implements Serializable {
 
     public static CommandEntry get(String name) {
         return get(opcodeForName(name));
+    }
+
+    public static Optional<CommandEntry> getOptional(String name) {
+        return getOptional(opcodeForName(name));
     }
 }

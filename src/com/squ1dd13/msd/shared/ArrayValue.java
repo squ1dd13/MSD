@@ -1,11 +1,10 @@
 package com.squ1dd13.msd.shared;
 
 import com.squ1dd13.msd.decompiler.high.*;
-import com.squ1dd13.msd.decompiler.shared.*;
 
 // SCM array
 public class ArrayValue {
-    public LowLevelType arrayReferenceType;
+    public ConcreteType arrayReferenceType;
     public int offsetNumber; // 2 bytes
     public int index; // 2 bytes
     public int size; // 1 byte
@@ -35,7 +34,7 @@ public class ArrayValue {
         }
     };
 
-    public ArrayValue(LowLevelType refType, int[] bytes) {
+    public ArrayValue(ConcreteType refType, int[] bytes) {
         arrayReferenceType = refType;
         offsetNumber = bytes[0] | bytes[1] << 8;
         index = bytes[2] | bytes[3] << 8;

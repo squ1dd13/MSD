@@ -6,28 +6,28 @@ import com.squ1dd13.msd.shared.*;
 import java.util.*;
 
 public class Argument {
-    public LowLevelType type;
+    public ConcreteType type;
 
     public int intValue;
     public float floatValue;
     public String stringValue = "";
 
-    public Argument(LowLevelType type, int intValue) {
+    public Argument(ConcreteType type, int intValue) {
         this.type = type;
         this.intValue = intValue;
     }
 
-    public Argument(LowLevelType type, float floatValue) {
+    public Argument(ConcreteType type, float floatValue) {
         this.type = type;
         this.floatValue = floatValue;
     }
 
-    public Argument(LowLevelType type, String stringValue) {
+    public Argument(ConcreteType type, String stringValue) {
         this.type = type;
         this.stringValue = stringValue;
     }
 
-    public Argument(LowLevelType type, int intValue, float floatValue, String stringValue) {
+    public Argument(ConcreteType type, int intValue, float floatValue, String stringValue) {
         this.type = type;
         this.intValue = intValue;
         this.floatValue = floatValue;
@@ -61,17 +61,17 @@ public class Argument {
         if(hlt == AbstractType.End) {
             if(intValue != 0) {
                 hlt = AbstractType.Int;
-                type = LowLevelType.S16;
+                type = ConcreteType.S16;
             } else if(!stringValue.isEmpty()) {
                 System.out.println("yeee");
                 hlt = AbstractType.Str;
-                type = LowLevelType.String8;
+                type = ConcreteType.String8;
             } else if(floatValue != 0) {
                 hlt = AbstractType.Flt;
-                type = LowLevelType.F32;
+                type = ConcreteType.F32;
             } else {
                 hlt = AbstractType.Int;
-                type = LowLevelType.S8;
+                type = ConcreteType.S8;
             }
         }
 

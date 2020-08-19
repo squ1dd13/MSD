@@ -109,16 +109,16 @@ public class BlockFactory {
             }
         }
 
-        List<Command> operationCommands = new ArrayList<>();
-
-        int opIndex = index;
-        while(VariableOperation.forCommand(commands.get(opIndex)) != null) {
-            operationCommands.add(commands.get(opIndex++));
-        }
-
-        if(operationCommands.size() > 1) {
-            return new FactoryOutput(new ArithmeticBlock(operationCommands), operationCommands.size());
-        }
+//        List<Command> operationCommands = new ArrayList<>();
+//
+//        int opIndex = index;
+//        while(VariableOperation.forCommand(commands.get(opIndex)) != null) {
+//            operationCommands.add(commands.get(opIndex++));
+//        }
+//
+//        if(operationCommands.size() > 1) {
+//            return new FactoryOutput(new ArithmeticBlock(operationCommands), operationCommands.size());
+//        }
 
         return new FactoryOutput(new SingleCommand(command), 1);
     }

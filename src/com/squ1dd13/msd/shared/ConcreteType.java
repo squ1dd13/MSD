@@ -1,6 +1,6 @@
 package com.squ1dd13.msd.shared;
 
-public enum LowLevelType {
+public enum ConcreteType {
     // This enum has all of the types that exist in GTA: SA's SCM files.
     // An SCM disassembler must know all of these, but a decompiler can use
     //  a shorter list (by combining the integer types and string types into just Int/String).
@@ -32,9 +32,9 @@ public enum LowLevelType {
 
     // 'n' has no significance, but it allows the enum to act as a visual lookup
     //  table when debugging (because the type encoding is written).
-    LowLevelType(int n) { }
+    ConcreteType(int n) { }
 
-    public static LowLevelType decode(int n) {
+    public static ConcreteType decode(int n) {
         return values()[n];
     }
 

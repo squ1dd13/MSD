@@ -1,7 +1,6 @@
 package com.squ1dd13.msd.compiler;
 
 import com.squ1dd13.msd.compiler.language.*;
-import com.squ1dd13.msd.compiler.language.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.io.*;
@@ -24,7 +23,7 @@ public class CompilableScript {
         return BasicCommand.create(
             opcode,
             Command.commands.get(opcode).name,
-            new Argument(LowLevelType.S32, realOffset)
+            new Argument(ConcreteType.S32, realOffset)
         );
     }
 
@@ -37,14 +36,14 @@ public class CompilableScript {
 
         int offset = 0;
         for(BasicCommand command : allCommands) {
-            List<Integer> bytes = new ArrayList<>();
-
+            BasicCommand finalCommand = command;
             if(command.highLevel.opcode == Opcode.RelativeConditionalJump.get()
                 || command.highLevel.opcode == Opcode.RelativeUnconditionalJump.get()) {
-                bytes.addAll(swapJump(command, offset).compile());
-            } else {
-                bytes.addAll(command.compile());
+                finalCommand = swapJump(command, offset);
             }
+
+            System.out.println(offset + ": " + command.toString());
+            List<Integer> bytes = new ArrayList<>(finalCommand.compile());
 
             offset += bytes.size();
 

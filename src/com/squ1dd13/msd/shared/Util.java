@@ -25,6 +25,25 @@ public class Util {
         return bytes;
     }
 
+    public static List<Integer> intToByteListLE(int v) {
+        return List.of(
+            v & 0xFF,
+            v >> 8 & 0xFF,
+            v >> 16 & 0xFF,
+            v >> 24 & 0xFF
+        );
+    }
+
+    public static List<Integer> intToByteListLE(int v, int n) {
+        List<Integer> bytes = new ArrayList<>(n);
+
+        for(int i = 0; i < n; ++i) {
+            bytes.add(v >> i * 8 & 0xFF);
+        }
+
+        return bytes;
+    }
+
     public static int[] byteArrayToIntArray(byte[] buf) {
         int[] array = new int[buf.length];
         for(int i = 0; i < array.length; i++) {
@@ -33,11 +52,26 @@ public class Util {
         return array;
     }
 
+    public static List<Integer> byteArrayToIntList(byte[] buf) {
+        int[] array = new int[buf.length];
+        for(int i = 0; i < array.length; i++) {
+            array[i] = buf[i] & 0xFF;
+        }
+        return intArrayToList(array);
+    }
+
     public static int[] floatToBytesLE(float f) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         return byteArrayToIntArray(buffer.putFloat(f).array());
+    }
+
+    public static List<Integer> floatToByteListLE(float f) {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        return intArrayToList(byteArrayToIntArray(buffer.putFloat(f).array()));
     }
 
     public static int intFromBytesLE(int[] bytes, int n) {
@@ -180,6 +214,15 @@ public class Util {
         return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xFFFFFFFFL;
     }
 
+    public static List<Integer> longToByteListLE(long v) {
+        return List.of(
+            (int)(v & 0xFF),
+            (int)(v >> 8 & 0xFF),
+            (int)(v >> 16 & 0xFF),
+            (int)(v >> 24 & 0xFF)
+        );
+    }
+
     public static void writeUnsignedInt(RandomAccessFile randomAccessFile, long v) throws IOException {
         int[] bytes = {
             (int)(v & 0xFF),
@@ -199,5 +242,11 @@ public class Util {
                 randomAccessFile.writeChar(s.charAt(i));
             }
         }
+    }
+
+    public static String removeNullChars(String s) {
+        int nullIndex = s.indexOf(0);
+        if(nullIndex != -1) return s.substring(0, nullIndex).strip();
+        return s;
     }
 }

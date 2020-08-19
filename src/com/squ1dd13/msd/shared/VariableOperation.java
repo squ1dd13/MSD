@@ -92,6 +92,21 @@ public class VariableOperation {
         return op.withCommand(cmd);
     }
 
+    public static Optional<VariableOperation> forOperatorWithTypes(String operator, AbstractType leftType, AbstractType rightType) {
+        VariableOperation operation = null;
+
+        for(VariableOperation variableOperation : operationsMap.values()) {
+            if(variableOperation.operatorString.equals(operator)) {
+                if(variableOperation.leftType == leftType && variableOperation.rightType == rightType) {
+                    operation = variableOperation;
+                    break;
+                }
+            }
+        }
+
+        return Optional.ofNullable(operation);
+    }
+
     private VariableOperation withCommand(Command cmd) {
         VariableOperation copy = new VariableOperation(leftType, operatorString, rightType, opcode);
         copy.left = cmd.arguments[0];

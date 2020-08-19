@@ -1,6 +1,5 @@
 package com.squ1dd13.msd.decompiler.disassembler;
 
-import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.shared.*;
 
@@ -83,15 +82,15 @@ public class ReversedCommand {
             System.arraycopy(bytes, 1, valueBytes, 0, bytes.length - 1);
         }
 
-        public LowLevelType lowLevelType() {
-            return LowLevelType.decode(typeCode);
+        public ConcreteType lowLevelType() {
+            return ConcreteType.decode(typeCode);
         }
 
         public DataValue toDataValue() {
-            LowLevelType type = lowLevelType();
+            ConcreteType type = lowLevelType();
 
             DataValue value = new DataValue();
-            value.type = LowLevelType.decode(typeCode).highLevelType();
+            value.type = ConcreteType.decode(typeCode).highLevelType();
 
             if(value.type.isInteger()) {
                 value.intValue = Util.intFromBytesLE(valueBytes, type.valueLength());
@@ -99,7 +98,7 @@ public class ReversedCommand {
             } else if(value.type.isString()) {
                 char[] chars;
 
-                if(type == LowLevelType.StringVar) {
+                if(type == ConcreteType.StringVar) {
                     // Read the size and then the characters.
                     chars = new char[valueBytes[0]];
                     length = valueBytes[0] + 2;
@@ -109,7 +108,7 @@ public class ReversedCommand {
                     }
                 } else {
                     // Just read the correct number of characters (or until null found).
-                    chars = new char[type == LowLevelType.String8 ? 8 : 16];
+                    chars = new char[type == ConcreteType.String8 ? 8 : 16];
                     length = chars.length + 1;
 
                     for(int i = 0; i < chars.length; ++i) {

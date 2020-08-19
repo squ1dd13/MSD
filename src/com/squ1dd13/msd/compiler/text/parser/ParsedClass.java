@@ -1,17 +1,19 @@
 package com.squ1dd13.msd.compiler.text.parser;
 
+import com.squ1dd13.msd.compiler.*;
 import com.squ1dd13.msd.compiler.text.lexer.*;
 import com.squ1dd13.msd.decompiler.high.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
 
-public class ClassParser extends ObjectParser {
+public class ParsedClass extends ObjectParser {
     public final Map<Integer, MethodParser> parsedMethods = new HashMap<>();
+    public final Map<String, Integer> methodOpcodes = new HashMap<>();
     public String name;
     public boolean isStatic;
 
-    public ClassParser(Iterator<Token> iterator) {
+    public ParsedClass(Iterator<Token> iterator) {
         var first = iterator.next();
 
         if(first.getText().equals("static")) {
@@ -33,36 +35,38 @@ public class ClassParser extends ObjectParser {
     }
 
     public void addVariableNames(List<Command> commands) {
-        for(Command command : commands) {
-            if(!parsedMethods.containsKey(command.opcode)) {
-                continue;
-            }
 
-            MethodParser method = parsedMethods.get(command.opcode);
-            if(method.parameters.size() != command.arguments.length - (method.isStatic ? 0 : 1)) {
-                continue;
-            }
 
-            if(!method.isStatic && command.arguments[0].type.isVariable()) {
-                // Use the parameter to give the variable a more meaningful name.
-                var variable = Variable.getOrCreate(command.arguments[0]);
-                variable.customTypeName = name;
-                variable.setCustomName(null);
-            }
-
-            // Static classes don't have a hidden "this" parameter, so the arguments start at 0.
-            int i = method.isStatic ? 0 : 1;
-            for(; i < command.arguments.length; ++i) {
-                int realIndex = method.isStatic ? i : i - 1;
-                String paramName = method.parameterNames.get(realIndex);
-
-                if(command.arguments[i].type.isVariable()) {
-                    // Use the parameter to give the variable a more meaningful name.
-                    var variable = Variable.getOrCreate(command.arguments[i]);
-                    if(variable.customTypeName == null) variable.setCustomName(paramName);
-                }
-            }
-        }
+//        for(Command command : commands) {
+//            if(!parsedMethods.containsKey(command.opcode)) {
+//                continue;
+//            }
+//
+//            MethodParser method = parsedMethods.get(command.opcode);
+//            if(method.parameters.size() != command.arguments.length - (method.isStatic ? 0 : 1)) {
+//                continue;
+//            }
+//
+//            if(!method.isStatic && command.arguments[0].type.isVariable()) {
+//                // Use the parameter to give the variable a more meaningful name.
+//                var variable = Variable.getOrCreate(command.arguments[0]);
+//                variable.customTypeName = name;
+//                variable.setCustomName(null);
+//            }
+//
+//            // Static methods don't have a hidden "this" parameter, so the arguments start at 0.
+//            int i = method.isStatic ? 0 : 1;
+//            for(; i < command.arguments.length; ++i) {
+//                int realIndex = method.isStatic ? i : i - 1;
+//                String paramName = method.parameterNames.get(realIndex);
+//
+//                if(command.arguments[i].type.isVariable()) {
+//                    // Use the parameter to give the variable a more meaningful name.
+//                    var variable = Variable.getOrCreate(command.arguments[i]);
+//                    if(variable.customTypeName == null) variable.setCustomName(paramName);
+//                }
+//            }
+//        }
     }
 
     public String createCallString(Command command) {
@@ -86,10 +90,15 @@ public class ClassParser extends ObjectParser {
             method.isStatic |= isStatic;
 
             parsedMethods.put(method.opcode, method);
+            methodOpcodes.put(method.name, method.opcode);
         }
     }
 
-    private static class MethodParser {
+    public Optional<MethodParser> getMethod(String name) {
+        return Optional.ofNullable(parsedMethods.getOrDefault(methodOpcodes.getOrDefault(name, -1), null));
+    }
+
+    public static class MethodParser {
         private final List<Token> tokens;
         private final Iterator<Token> tokenIterator;
         public String name;
@@ -154,6 +163,8 @@ public class ClassParser extends ObjectParser {
 
             return callBuilder.append(")").toString();
         }
+
+//        public BasicCommand toCommand()
 
         private void parseMeta() {
             if(tokens.get(0).isNot(Token.TokenType.OpenSquare)) return;

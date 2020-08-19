@@ -90,7 +90,7 @@ public class ParserUtils {
         ).collect(Collectors.toList());
     }
 
-    static List<Token> readCurrentLevel(Iterator<Token> iterator, Token.TokenType open, Token.TokenType close) {
+    public static List<Token> readCurrentLevel(Iterator<Token> iterator, Token.TokenType open, Token.TokenType close) {
         // The current level should be 1, because the opening token should have been read.
         int level = 1;
 
@@ -110,5 +110,32 @@ public class ParserUtils {
         }
 
         return levelTokens;
+    }
+
+    public static List<List<Token>> splitCurrentLevel(List<Token> levelTokens, Token.TokenType open, Token.TokenType close, Token.TokenType delim) {
+        int level = 1;
+
+        List<List<Token>> tokenGroups = new ArrayList<>(List.of(new ArrayList<>()));
+        TokenIterator iterator = new TokenIterator(levelTokens);
+
+        while(iterator.hasNext()) {
+            Token t = iterator.next();
+
+            if(t.is(open)) {
+                level++;
+            } else if(t.is(close)) {
+                level--;
+            } else if(level == 1 && t.is(delim)) {
+                tokenGroups.add(new ArrayList<>());
+            }
+
+            tokenGroups.get(tokenGroups.size() - 1).add(t);
+        }
+
+        if(tokenGroups.get(tokenGroups.size() - 1).isEmpty()) {
+            return tokenGroups.subList(0, tokenGroups.size() - 1);
+        }
+
+        return tokenGroups;
     }
 }

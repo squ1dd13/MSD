@@ -1,7 +1,6 @@
 package com.squ1dd13.msd.compiler;
 
 import com.squ1dd13.msd.compiler.language.*;
-import com.squ1dd13.msd.compiler.language.*;
 import com.squ1dd13.msd.shared.*;
 
 import java.util.*;
@@ -14,7 +13,7 @@ public class BasicCommand implements Compilable {
     public List<Integer> getOpcodeBytes() {
         int opcode = CommandRegistry.get(highLevel).getOpcode();
 
-        // We need the opcode bytes in little-endian, and then we only want the sublist 0->2,
+        // We need the opcode bytes in little-endian, and then we only want the sublist 0->2
         //  because the opcode is only 2 bytes long.
         return Util.intArrayToList(Util.intToBytesLE(opcode)).subList(0, 2);
     }
@@ -24,7 +23,7 @@ public class BasicCommand implements Compilable {
 
         for(int i = 0; i < arguments.size(); i++) {
             Argument arg = arguments.get(i);
-            arg.type = CommandRegistry.get(highLevel).lowLevelParameters().get(i);
+            arg.type = CommandRegistry.get(highLevel).concreteParamTypes().get(i);
 
             compiled.addAll(arg.compile());
         }
