@@ -65,6 +65,7 @@ public class Main {
         CommandRegistry.addPseudoCommands();
 
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
+        CommandRegistry.loadParameterCounts("/Users/squ1dd13/Downloads/SASCM.ini");
 
         SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/ammu.scm");
         SCM scm1 = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
@@ -74,8 +75,17 @@ public class Main {
         script = scm2.toScript();
 //        script.print();
 
-        Script newScript = new Script("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/carmod1.scm");
-        newScript.print();
+        CommandRegistry.loadVariadicInstructions("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/variadic.txt");
+
+
+//        Script newScript = new Script("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/carmod1.scm");
+//        newScript.print();
+
+        MainScript mainScript = new MainScript(
+            "/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/data/script/main.scm",
+            "/Users/squ1dd13/Downloads/mission_scripts"
+        );
+
 
 //        HighLevelScript highLevelScript = new HighLevelScript(script);
 //

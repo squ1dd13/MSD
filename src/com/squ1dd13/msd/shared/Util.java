@@ -204,7 +204,7 @@ public class Util {
             builder.append((char)b);
         }
 
-        return builder.toString();
+        return removeNullChars(builder.toString());
     }
 
     public static long readUnsignedInt(RandomAccessFile randomAccessFile) throws IOException {

@@ -23,4 +23,12 @@ public enum Opcode {
     public int get() {
         return num;
     }
+
+    public static boolean isJump(int op) {
+        return op == Jump.num || op == JumpIfFalse.num;
+    }
+
+    public static boolean isCall(int op) {
+        return op == Call.num;
+    }
 }

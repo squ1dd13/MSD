@@ -9,13 +9,22 @@ import java.io.*;
 import java.util.*;
 
 public class ScriptValue implements ByteRepresentable {
-    ConcreteType concreteType;
+    public ConcreteType concreteType;
     private AbstractType abstractType;
-    private AnyValue value;
+    public AnyValue value;
     private int length;
+    public static boolean readType = true;
 
     public ScriptValue(RandomAccessFile randomAccessFile) throws IOException {
-        concreteType = ConcreteType.decode(randomAccessFile.read());
+        int customStringLength = -1;
+
+        if(readType) {
+            concreteType = ConcreteType.decode(randomAccessFile.read());
+        } else {
+            concreteType = ConcreteType.StringVar;
+            customStringLength = 128;
+        }
+
         abstractType = concreteType.highLevelType();
 
         int valueLength = concreteType.valueLength();
@@ -33,8 +42,8 @@ public class ScriptValue implements ByteRepresentable {
 
             if(concreteType == ConcreteType.StringVar) {
                 // Read the size and then the characters.
-                chars = new char[randomAccessFile.read()];
-                length = chars.length + 2;
+                chars = new char[customStringLength > -1 ? customStringLength : randomAccessFile.read()];
+                length = customStringLength > -1 ? customStringLength : (chars.length + 2);
 
                 for(int i = 0; i < chars.length; ++i) {
                     chars[i] = (char)randomAccessFile.read();
@@ -71,6 +80,8 @@ public class ScriptValue implements ByteRepresentable {
 
             value = AnyValue.array(bytes);
         }
+
+        customStringLength = -1;
     }
 
     public ScriptValue() {

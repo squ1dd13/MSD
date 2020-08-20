@@ -56,6 +56,8 @@ public class CommandRegistry implements Serializable {
         public String name;
         public List<ParameterType> parameterTypes = new ArrayList<>();
 
+        public boolean isVariadic = false;
+
         public List<ConcreteType> concreteParamTypes() {
             return parameterTypes.stream().map(ParameterType::getLowLevel).collect(Collectors.toList());
         }
@@ -165,6 +167,14 @@ public class CommandRegistry implements Serializable {
     }
 
     public static CommandEntry addCommand(Command command) {
+        if(contains(command.opcode)) {
+            var newEntry = new CommandEntry(command);
+            var currentEntry = get(command);
+
+            currentEntry.name = newEntry.name;
+            return currentEntry;
+        }
+
         var entry = new CommandEntry(command);
         shared.commandEntries.put(command.opcode, entry);
         shared.commandNames.put(entry.name, command.opcode);
@@ -199,5 +209,47 @@ public class CommandRegistry implements Serializable {
 
     public static Optional<CommandEntry> getOptional(String name) {
         return getOptional(opcodeForName(name));
+    }
+
+    public static void loadVariadicInstructions(String filename) throws IOException {
+        try(BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while((line = reader.readLine()) != null) {
+                getOptional(Integer.parseInt(line, 16)).ifPresent(commandEntry -> {
+                    commandEntry.isVariadic = true;
+                });
+            }
+        }
+    }
+
+    public static void loadParameterCounts(String filename) throws IOException {
+        try(BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while((line = reader.readLine()) != null) {
+                if(line.startsWith(";")) continue;
+
+                try {
+                    int opcode = Integer.parseInt(line.substring(0, line.indexOf('=')), 16);
+                    int count = Integer.parseInt(line.substring(line.indexOf('=') + 1, line.indexOf(',')));
+
+                    if(!contains(opcode)) {
+                        addCommand(new Command(opcode, "noname" + opcode));
+                    }
+
+                    var optional = getOptional(opcode);
+
+                    if(optional.isPresent()) {
+                        var commandEntry = optional.get();
+
+                        commandEntry.parameterTypes = new ArrayList<>();
+                        for(int i = 0; i < count; ++i) {
+                            commandEntry.parameterTypes.add(new CommandEntry.ParameterType(ConcreteType.Unknown));
+                        }
+                    } else {
+                        System.out.println("bad");
+                    }
+                } catch(Exception ignored) { }
+            }
+        }
     }
 }

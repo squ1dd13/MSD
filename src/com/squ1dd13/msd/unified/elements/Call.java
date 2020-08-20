@@ -1,20 +1,24 @@
-package com.squ1dd13.msd.unified;
+package com.squ1dd13.msd.unified.elements;
 
 import com.squ1dd13.msd.compiler.text.lexer.*;
 import com.squ1dd13.msd.compiler.text.lexer.Token.*;
 import com.squ1dd13.msd.compiler.text.parser.*;
-import com.squ1dd13.msd.decompiler.shared.*;
 import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.unified.*;
 
 import java.io.*;
 import java.util.*;
 
 public class Call implements ScriptElement {
     private String name;
-    private List<ScriptValue> arguments;
+    List<ScriptValue> arguments;
     private int opcode;
+    public int offset;
+    public String comment;
 
     public Call(RandomAccessFile randomAccessFile) throws IOException {
+        offset = (int)randomAccessFile.getFilePointer();
+
         opcode = randomAccessFile.read() | randomAccessFile.read() << 8;
 
         if(opcode == 0) {
@@ -29,16 +33,37 @@ public class Call implements ScriptElement {
         }
 
         if(commandEntry.isPresent()) {
+            boolean isVariadic = commandEntry.get().isVariadic;
             name = commandEntry.get().name;
             arguments = new ArrayList<>();
 
-            int argCount = commandEntry.get().parameterTypes.size();
+            int argCount = isVariadic ? 999 : commandEntry.get().parameterTypes.size();
+            if(opcode == 0x5B6) argCount = 1;
+
             for(int i = 0; i < argCount; ++i) {
+                if(opcode == 0x5B6) {
+                    ScriptValue.readType = false;
+                    arguments.add(new ScriptValue(randomAccessFile));
+                    ScriptValue.readType = true;
+                    break;
+                }
+
                 arguments.add(new ScriptValue(randomAccessFile));
+                if(isVariadic) {
+                    var pos = randomAccessFile.getFilePointer();
+                    if(randomAccessFile.read() == 0) {
+                        break;
+                    }
+                    randomAccessFile.seek(pos);
+                }
             }
         } else {
             System.out.println("unknown opcode");
         }
+    }
+
+    public AnyValue getArgValue(int n) {
+        return arguments.get(n).value;
     }
 
     public Call() {
@@ -133,21 +158,37 @@ public class Call implements ScriptElement {
 
     @Override
     public int getLength() {
-        int totalLength = 1;
+        int totalLength = 2;
 
-        for(var arg : arguments) {
-            totalLength += arg.getLength();
+        if(arguments != null) {
+            for(var arg : arguments) {
+                totalLength += arg.getLength();
+            }
         }
+
 
         return totalLength;
     }
 
     @Override
+    public List<String> toLineStrings() {
+        if(comment != null) {
+            return List.of("// " + comment, toString());
+        }
+
+        return List.of(toString());
+    }
+
+    @Override
     public String toString() {
         List<String> argStrings = new ArrayList<>();
-        for(var arg : arguments) {
-            argStrings.add(arg.toString());
+
+        if(arguments != null) {
+            for(var arg : arguments) {
+                argStrings.add(arg.toString());
+            }
         }
+
 
         return name + "(" + String.join(", ", argStrings) + ")";
     }
