@@ -5,6 +5,7 @@ import com.squ1dd13.msd.decompiler.high.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 import java.util.stream.*;
 
 // Shared information about commands.
@@ -219,6 +220,42 @@ public class CommandRegistry implements Serializable {
                     commandEntry.isVariadic = true;
                 });
             }
+        }
+    }
+
+    private static String createEnumMemberName(String commandName) {
+        String name = commandName.strip();
+
+        char first = name.charAt(0);
+        if(first != '_' || !Character.isAlphabetic(first)) {
+            name = "_" + name;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for(char c : name.toCharArray()) {
+            if(c == '_' || Character.isLetterOrDigit(c)) {
+                builder.append(c);
+            } else {
+                builder.append('_');
+            }
+        }
+
+        return builder.toString();
+    }
+
+    // Writes a C enum of all the command names to a file (useful for loading in decompilers).
+    public static void writeCStyleEnum(String filename, String enumName) throws IOException {
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write("enum " + enumName + " {\n");
+
+            for(var entry : shared.commandEntries.values()) {
+                String name = createEnumMemberName(entry.name);
+                String valueString = "0x" + Integer.toHexString(entry.opcode);
+
+                writer.write("    " + name + " = " + valueString + ",\n");
+            }
+
+            writer.write("};");
         }
     }
 

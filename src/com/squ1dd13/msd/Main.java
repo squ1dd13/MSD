@@ -77,6 +77,7 @@ public class Main {
 
         CommandRegistry.loadVariadicInstructions("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/variadic.txt");
 
+        CommandRegistry.writeCStyleEnum("/Users/squ1dd13/Documents/Opcode.h", "Opcode");
 
 //        Script newScript = new Script("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/carmod1.scm");
 //        newScript.print();
@@ -85,6 +86,7 @@ public class Main {
             "/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/data/script/main.scm",
             "/Users/squ1dd13/Downloads/mission_scripts"
         );
+
 
 
 //        HighLevelScript highLevelScript = new HighLevelScript(script);
