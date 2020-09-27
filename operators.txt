@@ -1,0 +1,76 @@
++=
+    0008 Int, Int
+    0009 Flt, Flt
+
+    0008 Int, Int
+    0009 Flt, Flt
+    000A Int, Int
+    000B Flt, Flt
+end
+
+-=
+    000C Int, Int
+    000D Flt, Flt
+    000E Int, Int
+    000F Flt, Flt
+end
+
+=
+    0004 Int, Int
+    0005 Flt, Flt
+    0006 Int, Int
+    0007 Flt, Flt
+
+    0084 Int, Int
+    0085 Int, Int
+
+    0086 Flt, Flt
+    0087 Flt, Flt
+    0088 Flt, Flt
+    0089 Flt, Flt
+
+    008A Int, Int
+    008B Int, Int
+end
+
+==
+    0038 Int, Int
+    0039 Int, Int
+    003A Int, Int
+    003B Int, Int
+    003C Int, Int
+
+    04A3 Int, Int
+    04A4 Int, Int
+
+    0042 Flt, Flt
+    0043 Flt, Flt
+    0044 Flt, Flt
+    0045 Flt, Flt
+    0046 Flt, Flt
+end
+
+>
+    0018 Int, Int
+    0019 Int, Int
+    001A Int, Int
+    001B Int, Int
+    001C Int, Int
+    001D Int, Int
+    001E Int, Int
+    001F Int, Int
+end
+
+*=
+    0010 Int, Int
+    0011 Flt, Flt
+    0012 Int, Int
+    0013 Flt, Flt
+end
+
+/=
+    0014 Int, Int
+    0015 Flt, Flt
+    0016 Int, Int
+    0017 Flt, Flt
+end

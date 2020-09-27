@@ -1,5 +1,7 @@
 package com.squ1dd13.msd.shared;
 
+import com.squ1dd13.msd.compiler.language.*;
+
 // Opcodes that are useful for us to know.
 public enum Opcode {
     // Relative jumps don't really exist. They're placeholders for real jumps
@@ -12,8 +14,11 @@ public enum Opcode {
     Jump(0x2),
 
     JumpIfFalse(0x4D),
+    Terminate(0x4E),
     Call(0x50),
-    If(0xD6);
+    Return(0x51),
+    If(0xD6),
+    Switch(0x871);
 
     private final int num;
     Opcode(int n) {

@@ -3,13 +3,11 @@ package com.squ1dd13.msd;
 import com.squ1dd13.msd.compiler.*;
 import com.squ1dd13.msd.compiler.text.lexer.*;
 import com.squ1dd13.msd.compiler.text.parser.*;
-import com.squ1dd13.msd.decompiler.*;
-import com.squ1dd13.msd.decompiler.disassembler.*;
-import com.squ1dd13.msd.decompiler.high.*;
-import com.squ1dd13.msd.decompiler.shared.*;
+import com.squ1dd13.msd.decomp.*;
+import com.squ1dd13.msd.decomp.controlflow.*;
+import com.squ1dd13.msd.decomp.dataflow.*;
 import com.squ1dd13.msd.misc.gxt.*;
 import com.squ1dd13.msd.shared.*;
-import com.squ1dd13.msd.unified.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -60,32 +58,62 @@ public class Main {
 
         GXT.mainGXT = GXT.load("/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/Text/american.gxt");
 
-        // Load GTA: San Andreas classes.
-        ClassRegistry.loadClasses("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/SanAndreas");
         CommandRegistry.addPseudoCommands();
-
         Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
         CommandRegistry.loadParameterCounts("/Users/squ1dd13/Downloads/SASCM.ini");
 
-        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/ammu.scm");
-        SCM scm1 = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
-        SCM scm2 = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/shopper.scm");
-        DecompiledScript script = scm.toScript();
-        script = scm1.toScript();
-        script = scm2.toScript();
-//        script.print();
+        Operator.parse(Files.readString(Path.of("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/operators.txt")));
 
-        CommandRegistry.loadVariadicInstructions("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/variadic.txt");
+        Decompiler decompiler = new Decompiler("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/shopper.scm");//"/Users/squ1dd13/Downloads/1496840926_visual-car-spawner-v1/VCS_v2.0_Android.csa");
 
-        CommandRegistry.writeCStyleEnum("/Users/squ1dd13/Documents/Opcode.h", "Opcode");
+        BasicScript script = decompiler.decompile();
+
+        ControlFlowGraph cfg = new ControlFlowGraph(
+            script.getBodyInstructions(),
+            new OffsetMap(script)
+        );
+
+        cfg.build();
+//        cfg.print();
+
+        var reachable = cfg.getReachableInstructions();
+        int unreachableCount = script.bodyCode.size() - reachable.size();
+        System.out.printf("%d instructio%s removed\n", unreachableCount, unreachableCount == 1 ? "n" : "ns");
+
+        script.bodyCode = reachable;
+
+        FlowAnalyzer flowAnalyzer = new FlowAnalyzer(script);
+        flowAnalyzer.analyze();
+        flowAnalyzer.createScript().print();
+
+        // Load GTA: San Andreas classes.
+
+//        CommandRegistry.addPseudoCommands();
+//
+//        Command.loadFile("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/commands.ini");
+//        CommandRegistry.loadParameterCounts("/Users/squ1dd13/Downloads/SASCM.ini");
+//
+//        SCM scm = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/ammu.scm");
+//        SCM scm1 = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/trains.scm");
+//        SCM scm2 = new SCM("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/shopper.scm");
+//        DecompiledScript script = scm.toScript();
+//        script = scm1.toScript();
+//        script = scm2.toScript();
+////        script.print();
+//
+//
+//
+//        CommandRegistry.loadVariadicInstructions("/Users/squ1dd13/Documents/MSD-Project/Java/MSD/variadic.txt");
+//
+//        CommandRegistry.writeCStyleEnum("/Users/squ1dd13/Documents/Opcode.h", "Opcode");
 
 //        Script newScript = new Script("/Users/squ1dd13/Documents/MSD-Project/cpp/GTA-ASM/GTA Scripts/carmod1.scm");
 //        newScript.print();
 
-        MainScript mainScript = new MainScript(
-            "/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/data/script/main.scm",
-            "/Users/squ1dd13/Downloads/mission_scripts"
-        );
+//        MainScript mainScript = new MainScript(
+//            "/Users/squ1dd13/gta_wine/drive_c/Program Files/Rockstar Games/GTA San Andreas/data/script/main.scm",
+//            "/Users/squ1dd13/Downloads/mission_scripts"
+//        );
 
 
 
