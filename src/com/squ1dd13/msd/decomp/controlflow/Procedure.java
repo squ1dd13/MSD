@@ -2,7 +2,7 @@ package com.squ1dd13.msd.decomp.controlflow;
 
 import com.squ1dd13.msd.decomp.*;
 import com.squ1dd13.msd.decomp.generic.*;
-import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.old.shared.*;
 
 public class Procedure extends CodeContainer<CodeElement> {
     public int offset;

@@ -1,0 +1,16 @@
+package com.squ1dd13.msd.old.decompiler;
+
+import com.squ1dd13.msd.old.shared.*;
+
+import java.util.*;
+
+// TODO: Remove DecompiledScript
+public class DecompiledScript {
+    public List<Command> commands = new ArrayList<>();
+
+    public void print() {
+        for(Command command : commands) {
+            System.out.println(command.offset + ": " + command.formattedString());
+        }
+    }
+}

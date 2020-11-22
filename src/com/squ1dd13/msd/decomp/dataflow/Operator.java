@@ -2,8 +2,8 @@ package com.squ1dd13.msd.decomp.dataflow;
 
 import com.squ1dd13.msd.decomp.*;
 import com.squ1dd13.msd.decomp.BasicScript.*;
-import com.squ1dd13.msd.misc.*;
-import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.old.misc.*;
+import com.squ1dd13.msd.old.shared.*;
 
 import java.util.*;
 

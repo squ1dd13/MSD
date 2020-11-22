@@ -2,7 +2,7 @@ package com.squ1dd13.msd.decomp.controlflow;
 
 import com.squ1dd13.msd.decomp.*;
 import com.squ1dd13.msd.decomp.generic.*;
-import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.old.shared.*;
 
 import java.util.*;
 
@@ -53,7 +53,7 @@ public class FunctionGenerator {
     private final OffsetMap offsets;
     private final List<BasicScript.Instruction> instructions;
 
-    public FunctionGenerator(FlowAnalyzer analyzer) {
+    public FunctionGenerator(FlowConstructor analyzer) {
         offsets = analyzer.offsets;
         instructions = analyzer.instructions;
     }
@@ -110,7 +110,7 @@ public class FunctionGenerator {
                         callIndex
                     )
                 );
-            } else if(instruction.opcode == Opcode.Return.get()) {
+            } else if(instruction.opcode == Opcode.Return.get() || instruction.opcode == Opcode.Terminate.get()) {
                 components.add(
                     new FunctionComponent(
                         BoundType.End,
@@ -167,8 +167,9 @@ public class FunctionGenerator {
                 procedure.bodyCode.add(instructions.get(i));
             }
 
-            FlowAnalyzer procedureAnalyzer = new FlowAnalyzer(procedure);
-            procedureAnalyzer.analyze();
+            FlowConstructor procedureAnalyzer = new FlowConstructor(procedure);
+            procedureAnalyzer.canGenerateFunctions = false;
+            procedureAnalyzer.build();
 
             procedure.bodyCode = procedureAnalyzer.getElements();
 

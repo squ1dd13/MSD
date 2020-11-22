@@ -1,7 +1,7 @@
 package com.squ1dd13.msd.decomp;
 
 import com.squ1dd13.msd.decomp.dataflow.*;
-import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.old.shared.*;
 
 import java.io.*;
 import java.nio.file.*;

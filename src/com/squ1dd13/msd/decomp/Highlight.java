@@ -81,6 +81,7 @@ public class Highlight {
             .replaceAll("^(label_[^:]+):", Red.highlight("$1") + ":")
             .replaceAll("(break|continue);", Pink.highlight("$1") + ";")
             .replaceAll("([^\\s]+)\\s(" + operatorRegex + ")\\s([^\\s)]+)", String.format("$1 $2 %s", Green.highlight("$3")))
+            .replaceAll("(not|and|or) ", Pink.highlight("$1 "))
             ;
     }
 }

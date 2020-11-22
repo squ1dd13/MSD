@@ -2,7 +2,7 @@ package com.squ1dd13.msd.decomp.controlflow;
 
 import com.squ1dd13.msd.*;
 import com.squ1dd13.msd.decomp.*;
-import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.old.shared.*;
 
 import java.util.*;
 
@@ -103,9 +103,9 @@ public class ControlFlowGraph {
         if(explored.contains(node.index)) return;
 
         int stackBefore = callStack.size();
-        //if(node.getOpcode() != Opcode.Terminate.get()) {
+        if(node.getOpcode() != Opcode.Terminate.get()) {
             buildConnections(node);
-        //}
+        }
 
         if(stackBefore > callStack.size()) {
             System.out.printf("%d causes stack change\n", instructions.get(node.index).offset);
@@ -140,8 +140,9 @@ public class ControlFlowGraph {
                 System.out.println("<null>");
                 continue;
             }
+            var instr = instructions.get(node.index);
+            String s = instr.offset + ": " + instr.toCodeString(0);
 
-            String s = instructions.get(node.index).toCodeString(0);
             StringBuilder builder = new StringBuilder(s).append(" // connected to: ");
 
             var connections = node.getConnections();

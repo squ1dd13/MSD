@@ -1,7 +1,7 @@
 package com.squ1dd13.msd.decomp;
 
 import com.squ1dd13.msd.decomp.generic.*;
-import com.squ1dd13.msd.shared.*;
+import com.squ1dd13.msd.old.shared.*;
 
 import java.util.*;
 
@@ -54,15 +54,15 @@ public class BasicScript extends CodeContainer<BasicScript.Instruction> {
     }
 
     public static class Instruction extends CodeElement {
-        private int opcodeAsRead;
+        private final int opcodeAsRead;
 
         public int offset;
         public int opcode;
-        public boolean conditional;
+        public boolean inverted;
         public List<BasicValue> arguments = new ArrayList<>();
 
         public Instruction(int readOpcode) {
-            conditional = (readOpcode >> 0xF & 1) != 0;
+            inverted = (readOpcode >> 0xF & 1) != 0;
             opcode = readOpcode & 0x7FFF;
             opcodeAsRead = readOpcode;
         }
@@ -70,7 +70,7 @@ public class BasicScript extends CodeContainer<BasicScript.Instruction> {
         public Instruction(Instruction other) {
             opcode = other.opcode;
             arguments = other.arguments;
-            conditional = other.conditional;
+            inverted = other.inverted;
             offset = other.offset;
             opcodeAsRead = other.opcodeAsRead;
         }
@@ -89,7 +89,11 @@ public class BasicScript extends CodeContainer<BasicScript.Instruction> {
                 }
             }
 
-            return builder.append(")").toString();
+            builder.append(")");
+            if(inverted) {
+                return "not " + builder.toString();
+            }
+            return builder.toString();
         }
 
         @Override
@@ -98,7 +102,7 @@ public class BasicScript extends CodeContainer<BasicScript.Instruction> {
 
             String prefix = isLabel ? "label_" + offset + ":\n" : "";
 
-            if(opcode == Opcode.Jump.get() || opcode == Opcode.JumpIfFalse.get()) {
+            if(opcode == Opcode.Jump.get()) {
                 return prefix + String.format("%sgoto label_%d;", indentStr, getJumpOffset());
             }
 
